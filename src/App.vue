@@ -78,7 +78,7 @@
 
 <script>
 import router from "./router";
-import api from "./api";
+// import api from "./api";
 
 export default {
   data() {
@@ -123,10 +123,10 @@ export default {
       // alert(this.round)
       router.replace("/" + this.round)
       localStorage.round = this.round
-    }
+    },
   },
   mounted: async function () {
-    this.round_options = await api.getData("round_options.json")
+    // this.round_options = await api.getData("round_options.json")
     if (localStorage.round) {
       this.round = localStorage.round;
     }
@@ -134,9 +134,10 @@ export default {
       localStorage.round = this.round_options[this.round_options.length - 1].value
       this.round = this.round_options[this.round_options.length - 1];
     }
+    this.change_round()
 
-    await router.replace(this.round.value)
   }
+
 }
 </script>
 <style>
