@@ -16,7 +16,7 @@ const routes = [
     component: () => import('../views/About.vue')
   },
   {
-    path: '/search/:search_text?',
+    path: '/:round/search/:search_text?',
     name: 'Search',
     component: () => import('../views/Search.vue')
   },
