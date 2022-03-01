@@ -22,6 +22,9 @@
         >
           {{ link.label }}
         </v-btn>
+
+        <v-spacer></v-spacer>
+
         <v-responsive max-width="260">
           <v-select
               dense
@@ -34,21 +37,6 @@
               :items="round_options"
           >
           </v-select>
-        </v-responsive>
-        <v-spacer></v-spacer>
-
-        <v-responsive max-width="260">
-          <v-text-field
-              dense
-              flat
-              hide-details
-              rounded
-              solo-inverted
-              v-model=search_text
-              append-icon="mdi-eye"
-              @keydown.enter.prevent="send_search"
-          ></v-text-field>
-
         </v-responsive>
       </v-container>
     </v-app-bar>
@@ -99,13 +87,15 @@ export default {
       links: [
         {label: '玩家', path: "player"},
         {label: '會戰', path: "match"},
+        {label: '搜尋', path: "search"},
+        {label: '武具大賞', path: "weapon"},
         {label: '關於', path: "about"},
       ],
     }
   },
   methods: {
     goto_page(path) {
-      if (path === "about") {
+      if (path in ["about", "weapon"]) {
         router.replace("/" + path)
       }
       else{
@@ -113,12 +103,7 @@ export default {
       }
 
     },
-    send_search() {
-      router.replace("/")
 
-      router.replace({name: "Search", params: {payload: this.search_text}})
-      // alert(0)
-    },
     change_round() {
       // alert(this.round)
       router.replace("/" + this.round)
