@@ -37,6 +37,11 @@ const routes = [
   },
   {
     path: '/:round?/match',
+    name: 'Match-index',
+    component: () => import('../views/Match-index.vue')
+  },
+  {
+    path: '/:round?/match/id?',
     name: 'Match',
     component: () => import('../views/Match.vue')
   },
