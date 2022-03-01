@@ -95,7 +95,7 @@ export default {
   },
   methods: {
     goto_page(path) {
-      if (path in ["about", "weapon"]) {
+      if (path === "about" || path === "weapon") {
         router.replace("/" + path)
       }
       else{
@@ -119,7 +119,7 @@ export default {
       localStorage.round = this.round_options[this.round_options.length - 1].value
       this.round = this.round_options[this.round_options.length - 1];
     }
-    this.change_round()
+    // this.change_round()
 
   }
 
