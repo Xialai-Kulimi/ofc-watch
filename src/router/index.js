@@ -40,6 +40,11 @@ const routes = [
     name: 'Match',
     component: () => import('../views/Match.vue')
   },
+  {
+    path: '/history/:round/:id',
+    name: 'History',
+    component: () => import('../views/History.vue')
+  },
 ]
 
 const router = new VueRouter({
