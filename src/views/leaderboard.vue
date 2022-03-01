@@ -103,9 +103,6 @@ export default {
 
   },
   methods: {
-    alert_m(n){
-        alert(n)
-    },
     generate_link(id){
       return ("/" + localStorage.round + "/player/" + id.toString())
     }
