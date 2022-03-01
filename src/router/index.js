@@ -38,7 +38,7 @@ const routes = [
   {
     path: '/:round?/match',
     name: 'Match',
-    component: () => import('../views/match.vue')
+    component: () => import('../views/Match.vue')
   },
 ]
 
