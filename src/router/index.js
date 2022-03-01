@@ -16,7 +16,7 @@ const routes = [
     component: () => import('../views/About.vue')
   },
   {
-    path: '/search/:search_text',
+    path: '/search/:search_text?',
     name: 'Search',
     component: () => import('../views/Search.vue')
   },
@@ -26,14 +26,19 @@ const routes = [
     component: () => import('../views/Message-wall.vue')
   },
   {
-    path: '/:round(\\d+)',
+    path: '/:round?',
     name: 'round_home',
     component: Home
   },
   {
-    path: '/:round(\\d+)/player',
+    path: '/:round?/player',
     name: 'Leaderboard',
     component: () => import('../views/leaderboard.vue')
+  },
+  {
+    path: '/:round?/match',
+    name: 'Match',
+    component: () => import('../views/match.vue')
   },
 ]
 
