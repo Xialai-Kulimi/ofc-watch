@@ -53,7 +53,7 @@
                   v-for="match in faction.matches"
                   :key="match"
               >
-                <td><a @click="click()">{{ match.id }}</a></td>
+                <td><a @click="goto_match(match.id)">{{ match.id }}</a></td>
                 <td>{{ match.start_time }}</td>
                 <td>{{ match.duration }}</td>
                 <td>{{ match.atk_num }}</td>
@@ -70,6 +70,8 @@
   </v-container>
 </template>
 <script>
+
+import router from "../router";
 
 export default {
   name: "Match",
@@ -97,5 +99,10 @@ export default {
       ]
     }
   },
+  methods: {
+    goto_match(id) {
+      router.replace("/"+localStorage.round+"/match/"+id)
+    }
+  }
 }
 </script>
