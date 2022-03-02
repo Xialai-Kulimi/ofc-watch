@@ -41,7 +41,7 @@ const routes = [
     component: () => import('../views/Match-index.vue')
   },
   {
-    path: '/:round?/match/id?',
+    path: '/:round?/match/:id',
     name: 'Match',
     component: () => import('../views/Match.vue')
   },
