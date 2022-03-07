@@ -1,7 +1,6 @@
 <template>
   <v-container>
     <v-card>
-
       <v-tabs
           v-model="tab"
           grow

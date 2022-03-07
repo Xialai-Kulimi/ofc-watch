@@ -14,188 +14,200 @@
           <img alt="Vue logo" src="../assets/big-eye.png" class="eye">
           <h1>Our Floating Castle Watcher</h1>
           <h1>我們的浮游城 觀察者</h1>
-        </v-card>
+          <v-divider></v-divider>
+<v-container
+    fluid
+    row
+    class="align-center justify-center"
+>
+  <v-container
+      class="ma-5"
+      width="500"
 
-
-        <v-card
-            class="ma-5"
-            width="500"
-
+  >
+    <v-card-title>最新事件</v-card-title>
+    <v-virtual-scroll
+        :bench="5"
+        :items="events"
+        height="400"
+        item-height="32"
+    >
+      <template v-slot:default="{ item }">
+        <v-list-item
+            :key="item"
+            link
+            dense
+            color="red"
+            :to="item.link"
         >
-          <v-card-title>最新事件</v-card-title>
-          <v-virtual-scroll
-              :bench="5"
-              :items="events"
-              height="400"
-              item-height="32"
-          >
-            <template v-slot:default="{ item }">
-                  <v-list-item
-                      :key="item"
-                      link
-                      dense
-                      color="red"
-                      :to="item.link"
-                  >
-                    {{item.text}}
-                  </v-list-item>
-            </template>
-          </v-virtual-scroll>
-        </v-card>
+          {{item.text}}
+        </v-list-item>
+      </template>
+    </v-virtual-scroll>
+  </v-container>
 
-      <v-card
-          class="ma-5"
-      >
-        <v-card-title>狩獵</v-card-title>
+  <v-container
+      class="ma-5"
+  >
+    <v-card-title>狩獵</v-card-title>
 
-        <v-container
-            v-for="hunt in hunts"
-            :key="hunt"
-            style="display: flex"
-            class="justify-end"
-        >
-          <v-dialog
-              :v-model="hunt.dialog"
-              width="500"
-          >
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn
-                  plain
-                  color="black"
-                  v-bind="attrs"
-                  v-on="on"
-              >
-                {{hunt.name}}
-              </v-btn>
-            </template>
+    <v-container
+        v-for="hunt in hunts"
+        :key="hunt"
+        style="display: flex"
 
-            <v-card>
-              <v-card-title>
-                {{hunt.name}}
-              </v-card-title>
-
-              <v-simple-table
-                  fixed-header
-                  height="300px"
-              >
-                <template v-slot:default>
-                  <thead>
-                  <tr>
-                    <th class="text-left">
-                      層數
-                    </th>
-                    <th class="text-left">
-                      次數
-                    </th>
-                    <th class="text-left">
-                      怪物組成
-                    </th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                  <tr
-                      v-for="item in hunt.dist"
-                      :key="item"
-
-                  >
-                    <td>{{ item.level }}</td>
-                    <td>{{ item.count }}</td>
-                    <td>
-                      <v-menu
-
-                          close-on-click
-                      >
-                        <template v-slot:activator="{ on, attrs }">
-                          <v-btn
-                              plain
-                              v-bind="attrs"
-                              v-on="on"
-                          >
-                            點擊查看
-                          </v-btn>
-                        </template>
-
-                        <v-list
-                            width="500"
-                        >
-                          <v-list-item
-                              v-for="i in item.monster"
-                              :key="i"
-                          >
-                            <v-list-item-title>{{ i.type }}</v-list-item-title>
-                            <v-list-item>{{i.count}}</v-list-item>
-                          </v-list-item>
-                        </v-list>
-                      </v-menu>
-                    </td>
-                  </tr>
-                  </tbody>
-                </template>
-              </v-simple-table>
-
-            </v-card>
-          </v-dialog>
-          <v-menu
-
-              close-on-click
-          >
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn
-                  plain
-                  v-bind="attrs"
-                  v-on="on"
-              >
-                點擊查看
-              </v-btn>
-            </template>
-
-            <v-list
-                width="500"
-            >
-              <v-list-item
-                  v-for="i in hunt.loot"
-                  :key="i"
-              >
-                <v-list-item-title>{{ i.name }}</v-list-item-title>
-                <v-list-item>{{i.count}}</v-list-item>
-              </v-list-item>
-            </v-list>
-          </v-menu>
-        </v-container>
-      </v-card>
-
-
-      <v-card
-          class="ma-5"
+    >
+      <v-dialog
+          :v-model="hunt.dialog"
           width="500"
-
       >
-        <v-card-title>裝備種類統計</v-card-title>
-        <v-simple-table>
-          <template v-slot:default>
-            <thead>
-            <tr>
-              <th class="text-left">
-                種類
-              </th>
-              <th class="text-left">
-                次數
-              </th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr
-                v-for="item in weapon_type_count"
-                :key="item.name"
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn
+              plain
+              color="black"
+              v-bind="attrs"
+              v-on="on"
+          >
+            {{hunt.name}}
+          </v-btn>
+        </template>
 
+        <v-card>
+          <v-container>
+            <v-card-title>
+              {{hunt.name}}
+            </v-card-title>
+            <v-menu
+
+                close-on-click
             >
-              <td>{{ item.name }}</td>
-              <td>{{ item.count }}</td>
-            </tr>
-            </tbody>
-          </template>
-        </v-simple-table>
-      </v-card>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                    plain
+                    v-bind="attrs"
+                    v-on="on"
+                >
+                  點擊查看此地區的掉落物
+                </v-btn>
+              </template>
+
+              <v-list
+                  width="500"
+              >
+                <v-list-item
+                    v-for="i in hunt.loot"
+                    :key="i"
+                >
+                  <v-list-item-title>{{ i.name }}</v-list-item-title>
+                  <v-list-item>{{i.count}}</v-list-item>
+                </v-list-item>
+              </v-list>
+            </v-menu>
+          </v-container>
+
+
+          <v-simple-table
+              fixed-header
+              height="300px"
+          >
+            <template v-slot:default>
+              <thead>
+              <tr>
+                <th class="text-left">
+                  層數
+                </th>
+                <th class="text-left">
+                  次數
+                </th>
+                <th class="text-left">
+                  怪物組成
+                </th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr
+                  v-for="item in hunt.dist"
+                  :key="item"
+
+              >
+                <td>{{ item.level }}</td>
+                <td>{{ item.count }}</td>
+                <td>
+                  <v-menu
+
+                      close-on-click
+                  >
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn
+                          plain
+                          v-bind="attrs"
+                          v-on="on"
+                      >
+                        點擊查看
+                      </v-btn>
+                    </template>
+
+                    <v-list
+                        width="500"
+                    >
+                      <v-list-item
+                          v-for="i in item.monster"
+                          :key="i"
+                      >
+                        <v-list-item-title>{{ i.type }}</v-list-item-title>
+                        <v-list-item>{{i.count}}</v-list-item>
+                      </v-list-item>
+                    </v-list>
+                  </v-menu>
+                </td>
+              </tr>
+              </tbody>
+            </template>
+          </v-simple-table>
+
+        </v-card>
+      </v-dialog>
+
+    </v-container>
+  </v-container>
+
+
+  <v-container
+      class="ma-5"
+      width="500"
+
+  >
+    <v-card-title>裝備種類統計</v-card-title>
+    <v-simple-table>
+      <template v-slot:default>
+        <thead>
+        <tr>
+          <th class="text-left">
+            種類
+          </th>
+          <th class="text-left">
+            次數
+          </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr
+            v-for="item in weapon_type_count"
+            :key="item.name"
+
+        >
+          <td>{{ item.name }}</td>
+          <td>{{ item.count }}</td>
+        </tr>
+        </tbody>
+      </template>
+    </v-simple-table>
+  </v-container>
+</v-container>
+        </v-card>
+
+
+
 
 
 

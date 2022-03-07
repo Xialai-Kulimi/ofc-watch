@@ -24,9 +24,7 @@ def get_report(report_id):
     return get_response
 
 
-try: _round = sys.argv[1]
-except IndexError: _round = '6'
-
+_round = sys.argv[1]
 
 initial_wait_time = 10
 wait_time = initial_wait_time
@@ -37,23 +35,26 @@ ofc_db = mgclient[f'ofc{_round}'.replace('.', '-')]
 report_collection = ofc_db['report']
 
 
-last_id = report_collection.find_one(sort=[("_id", -1)])['_id']
-if last_id != report_collection.count_documents({}):
-    for i in range(1, last_id):
-        if report_collection.find_one({"_id": i}) == None:
-            response = get_report(i)
-            report = json.loads(get_report(i).text)
-            if status_code.status_code != 200 or report.get("report") == None:
-                print(response.text)
-                stop()
-            
-            report['_id'] = report['report']['id']
-            report_collection.insert_one(report)
+try:
+    last_id = report_collection.find_one(sort=[("_id", -1)])['_id']
+    if last_id != report_collection.count_documents({}):
+        for i in range(1, last_id):
+            if report_collection.find_one({"_id": i}) == None:
+                response = get_report(i)
+                report = json.loads(get_report(i).text)
+                if status_code.status_code != 200 or report.get("report") == None:
+                    print(response.text)
+                    stop()
+                
+                report['_id'] = report['report']['id']
+                report_collection.insert_one(report)
+    
+        i += 1
+    else:
+        i = report_collection.count_documents({}) + 1
 
-    i += 1
-else:
-    i = report_collection.count_documents({}) + 1
-
+except:
+    i = 1
 
 while True:
     print(i)
