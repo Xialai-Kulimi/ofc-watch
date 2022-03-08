@@ -159,7 +159,7 @@
     <v-card>
 
     </v-card>
-    {{this.$route.params}} {{this.$route.params.round}}
+<!--    {{this.$route.params}} {{this.$route.params.round}}-->
   </v-container>
 </template>
 <script>

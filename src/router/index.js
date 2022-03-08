@@ -6,6 +6,11 @@ Vue.use(VueRouter)
 
 const routes = [
   {
+    path: '/weapon',
+    name: 'Weapon',
+    component: () => import('../views/Weapon.vue')
+  },
+  {
     path: '/',
     name: 'Home',
     component: Home
@@ -50,6 +55,8 @@ const routes = [
     name: 'History',
     component: () => import('../views/History.vue')
   },
+
+
 ]
 
 const router = new VueRouter({
