@@ -2,7 +2,6 @@
   <v-app id="inspire">
     <v-app-bar
         app
-        color="white"
         flat
     >
       <v-container class="py-0 fill-height">
@@ -41,7 +40,7 @@
       </v-container>
     </v-app-bar>
 
-    <v-main class="grey lighten-3 fill-height">
+    <v-main class="fill-height" app>
       <v-container>
 
 
@@ -49,18 +48,19 @@
 
       </v-container>
 
-        <v-footer
 
-            dense
-            padless
-        >
-          <v-card-text
-              class="text-center"
-
-          >Copyright © {{ new Date().getFullYear() }}  ofc-watch.kulimi.tw All rights reserved.</v-card-text>
-        </v-footer>
 
     </v-main>
+    <v-footer
+        app
+        dense
+        padless
+    >
+      <v-card-text
+          class="text-center"
+
+      >Copyright © {{ new Date().getFullYear() }}  ofc-watch.kulimi.tw All rights reserved.</v-card-text>
+    </v-footer>
   </v-app>
 </template>
 

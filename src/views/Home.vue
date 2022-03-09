@@ -64,7 +64,6 @@
         <template v-slot:activator="{ on, attrs }">
           <v-btn
               plain
-              color="black"
               v-bind="attrs"
               v-on="on"
           >
@@ -228,7 +227,7 @@ export default {
         {
           text: "Kulimi died",
           color: "red",
-          link: "/12/545454"
+          link: "/12/history/545454"
         },
         {
           text: "Kulimi died",
