@@ -51,7 +51,7 @@ const routes = [
     component: () => import('../views/Match.vue')
   },
   {
-    path: '/history/:round/:id',
+    path: '/:round?/history/:id',
     name: 'History',
     component: () => import('../views/History.vue')
   },

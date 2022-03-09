@@ -250,7 +250,7 @@ export default {
       return text
     },
     compose_report_link(id) {
-      return "/history/"+ localStorage.getItem('round') +'/'+id
+      return '/'+localStorage.round+"/history/"+id
     }
   }
 }
