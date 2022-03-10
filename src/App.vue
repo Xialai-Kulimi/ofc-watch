@@ -66,7 +66,7 @@
 
 <script>
 import router from "./router";
-// import api from "./api";
+import api from "./api";
 
 export default {
   data() {
@@ -82,7 +82,8 @@ export default {
         {text: '第八輪 疫苗亂鬥', value: '8'},
         {text: '第九輪 吳剛', value: '9'},
         {text: '第十輪 bang利商店大亂鬥', value: '10'},
-        {text: '第十二輪 年夜飯', value: '11'}
+        {text: '第十二輪 年夜飯', value: '11'},
+        {text: '第十三輪 真正的艾恩葛朗特', value: '12'}
       ],
       links: [
         {label: '玩家', path: "player"},
@@ -111,7 +112,7 @@ export default {
     },
   },
   mounted: async function () {
-    // this.round_options = await api.getData("round_options.json")
+    this.round_options = await api.getData("round_options")
     if (localStorage.round) {
       this.round = localStorage.round;
     }
