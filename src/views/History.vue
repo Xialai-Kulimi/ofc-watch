@@ -104,7 +104,7 @@ export default {
     }
   },
   mounted: async function () {
-    this.report = await api.getData( this.$route.params.round +"/history/"+this.$route.params.id + ".json")
+    this.report = await api.getData( this.$route.params.round +"/history/"+this.$route.params.id)
     this.format_time = (new Date(this.report.report.time)).toLocaleString()
     this.loading = true
   }
