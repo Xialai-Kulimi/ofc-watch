@@ -136,7 +136,7 @@ export default {
   },
   methods: {
     generate_link(id){
-      return ("/" + localStorage.round + "/player/" + id.toString())
+      return ("/" + this.$route.params.round + "/player/" + id.toString())
     }
   },
   components: {

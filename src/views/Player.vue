@@ -133,7 +133,7 @@ export default {
       return (new Date(ori_time)).toLocaleString()
     },
     compose_report_link(id) {
-      return "/history/"+ localStorage.getItem('round') +'/'+id
+      return '/' + this.$route.params.round + "/history/" +id
     }
   }
 }

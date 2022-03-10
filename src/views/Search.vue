@@ -36,7 +36,7 @@ export default {
     send_search() {
       router.replace("/")
 
-      router.replace("/" + localStorage.round + "/search/" + this.search_text)
+      router.replace("/" + this.$route.params.round + "/search/" + this.search_text)
     },
   }
 }

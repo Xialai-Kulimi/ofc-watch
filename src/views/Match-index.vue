@@ -108,7 +108,7 @@ export default {
   },
   methods: {
     goto_match(id) {
-      router.replace("/"+localStorage.round+"/match/"+id)
+      router.replace("/"+this.$route.params.round+"/match/"+id)
     }
   },
   mounted: async function() {

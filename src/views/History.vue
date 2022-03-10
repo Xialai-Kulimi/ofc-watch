@@ -103,7 +103,7 @@ export default {
       return color + '--text'
     },
     compose_player_link(id) {
-      return '/'+localStorage.round+'/player/'+id
+      return '/'+this.$route.params.round+'/player/'+id
     }
   },
   mounted: async function () {
