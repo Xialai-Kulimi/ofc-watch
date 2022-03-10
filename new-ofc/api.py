@@ -30,5 +30,3 @@ def api(_round, param = '', _id = -1):
         result = data_collection.find_one({"_id": _round})
         return flask.Response(json.dumps(result['data']), mimetype='application/json')
 
-
-app.run(port=9000)
