@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import Round_Home from '../views/Round-Home.vue'
 import Home from '../views/Home.vue'
 
 Vue.use(VueRouter)
@@ -31,9 +32,9 @@ const routes = [
     component: () => import('../views/Message-wall.vue')
   },
   {
-    path: '/:round?',
+    path: '/:round',
     name: 'round_home',
-    component: Home
+    component: Round_Home
   },
   {
     path: '/:round/player',

@@ -7,13 +7,6 @@
       <v-container class="py-0 fill-height">
 
         <v-btn
-            text
-            to="/"
-        >
-          OFC WATCH
-        </v-btn>
-
-        <v-btn
             v-for="link in links"
             :key="link"
             @click="goto_page(link.path)"
@@ -86,6 +79,7 @@ export default {
         {text: '第十三輪 真正的艾恩葛朗特', value: '12'}
       ],
       links: [
+        {label: 'OFC WATCH', path: ""},
         {label: '玩家', path: "player"},
         {label: '會戰', path: "match"},
         {label: '搜尋', path: "search"},
@@ -96,30 +90,49 @@ export default {
   },
   methods: {
     goto_page(path) {
-      if (path === "about" || path === "weapon") {
-        router.replace("/" + path)
+      if (localStorage.round !== 'undefined'){
+        if (path === "about" || path === "weapon") {
+          router.replace("/" + path)
+        }
+        else{
+          router.replace("/" + localStorage.round + "/" + path)
+        }
       }
-      else{
-        router.replace("/" + localStorage.round + "/" + path)
-      }
+
 
     },
 
     change_round() {
       // alert(this.round)
-      router.replace("/" + this.round)
       localStorage.round = this.round
+      router.replace('/')
+      router.replace("/" + this.round)
+
     },
   },
   mounted: async function () {
-    this.round_options = await api.getData("round_options")
+
     if (localStorage.round) {
-      this.round = localStorage.round;
+      this.round = localStorage.round
     }
     else {
       localStorage.round = this.round_options[this.round_options.length - 1].value
-      this.round = this.round_options[this.round_options.length - 1];
+      this.round = this.round_options[this.round_options.length - 1]
     }
+
+    if (this.$route.path === '/') {
+      this.round = this.$route.params.round
+      localStorage.round = this.$route.params.round
+    }
+    else {
+      this.router.replace('/'+this.round)
+    }
+    setInterval(() => {
+      if (this.$route.params.round === 'undefined'){
+        this.router.replace('/')
+      }
+    }, 1000)
+    this.round_options = await api.getData("round_options")
     // this.change_round()
 
   }
