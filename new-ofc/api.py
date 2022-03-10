@@ -21,11 +21,15 @@ def api(_round, param = '', _id = -1):
         round_db = mgclient[f'ofc{_round}'.replace('.', '-')]
         data_collection = round_db[param]
         result = data_collection.find_one({"_id": _id})
+        if not result:
+            result = data_collection.find_one({"_id": int(_id)})
         return flask.Response(json.dumps(result), mimetype='application/json')
     elif (param != ''):
         round_db = mgclient[f'ofc{_round}'.replace('.', '-')]
         data_collection = round_db['data']
         result = data_collection.find_one({"_id": param})
+        if not result:
+            result = data_collection.find_one({"_id": int(param)})
         return flask.Response(json.dumps(result['data']), mimetype='application/json')
     else:
         round_db = mgclient[f'ofc'.replace('.', '-')]
