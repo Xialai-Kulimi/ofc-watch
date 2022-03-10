@@ -4,13 +4,6 @@
       row
       class="align-center justify-center"
   >
-    <v-card
-        class="ma-5"
-        height="200"
-        width="200"
-        img="https://kulimi.tw/bg.png"
-
-    ></v-card>
     <v-card class="ma-5"
 
     >
