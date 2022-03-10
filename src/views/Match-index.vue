@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-card>
+    <v-card v-if="loading">
       <v-tabs
           v-model="tab"
           grow
@@ -67,15 +67,22 @@
       </v-tabs-items>
     </v-card>
   </v-container>
+  <v-skeleton-loader
+      v-bind="!loading"
+      style="width: 100%"
+      type="card-avatar, article, actions"
+  ></v-skeleton-loader>
 </template>
 <script>
 
 import router from "../router";
+import api from "@/api";
 
 export default {
   name: "Match",
   data() {
     return {
+      loading: false,
       search_text: "",
       tab: "",
       matches: [
@@ -102,6 +109,10 @@ export default {
     goto_match(id) {
       router.replace("/"+localStorage.round+"/match/"+id)
     }
+  },
+  mounted: async function() {
+    this.matches = await api.getData( this.$route.params.round +"/matches")
+    this.loading = true
   }
 }
 </script>
