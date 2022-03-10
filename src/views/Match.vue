@@ -155,20 +155,23 @@
           </v-simple-table>
         </v-container>
     </v-card>
-    <div v-if="!loading">資料載入中</div>
-    <v-card>
-
-    </v-card>
+    <v-skeleton-loader
+        v-bind="!loading"
+        style="width: 100%"
+        type="card-avatar, article, actions"
+    ></v-skeleton-loader>
 <!--    {{this.$route.params}} {{this.$route.params.round}}-->
   </v-container>
 </template>
 <script>
 
+import api from "@/api";
+
 export default {
   name: "Search",
   data() {
     return {
-      loading: true,
+      loading: false,
       match: {
         startTime: 234566809898,
         endTime: 234567809898,
@@ -252,6 +255,10 @@ export default {
     compose_report_link(id) {
       return '/'+this.$route.params.round+"/history/"+id
     }
+  },
+  mounted: async function() {
+    this.match = await api.getData( this.$route.params.round +"/match/"+this.$route.params.id)
+    this.loading = true
   }
 }
 </script>
