@@ -1,6 +1,11 @@
 <template>
   <v-container class="py-0 fill-height">
-    {{ this.$route.params}} {{this.$route.params.round}}
+    <v-card>
+      <v-card-title>
+        還沒做完
+      </v-card-title>
+    </v-card>
+<!--    {{ this.$route.params}} {{this.$route.params.round}}-->
     <v-responsive max-width="260">
       <v-text-field
           dense

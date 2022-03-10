@@ -1,8 +1,10 @@
 <template>
   <v-container>
-    <v-card v-if="!loading">
-      資料載入中
-    </v-card>
+    <v-skeleton-loader
+        v-if="!loading"
+        style="width: 100%"
+        type="card-avatar, article, actions"
+    ></v-skeleton-loader>
     <v-card v-if="loading">
 
       <v-container>
@@ -58,7 +60,7 @@ export default {
   name: "Player",
   data() {
     return {
-      loading: true,
+      loading: false,
       player: {
         name: "Kulimi",
         role: "鍛造師",
@@ -122,15 +124,8 @@ export default {
       }
     }
   },
-  watch: {
-    "$store.state.round": async function () {
-      this.loading = false
-      this.player = await api.getData( "player/" + this.$route.params.id + ".json")
-      this.loading = true
-    }
-  },
   mounted: async function () {
-    this.player = await api.getData( "player/" + this.$route.params.id + ".json")
+    this.player = await api.getData( this.$route.params.round +"/player"+this.$route.params.id)
     this.loading = true
   },
   methods:{

@@ -156,7 +156,7 @@
         </v-container>
     </v-card>
     <v-skeleton-loader
-        v-bind="!loading"
+        v-if="!loading"
         style="width: 100%"
         type="card-avatar, article, actions"
     ></v-skeleton-loader>
