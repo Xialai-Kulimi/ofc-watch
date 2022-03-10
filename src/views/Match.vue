@@ -250,7 +250,7 @@ export default {
       return text
     },
     compose_report_link(id) {
-      return '/'+localStorage.round+"/history/"+id
+      return '/'+this.$route.params.round+"/history/"+id
     }
   }
 }

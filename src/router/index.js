@@ -36,27 +36,27 @@ const routes = [
     component: Home
   },
   {
-    path: '/:round?/player',
+    path: '/:round/player',
     name: 'Leaderboard',
     component: () => import('../views/leaderboard.vue')
   },
   {
-    path: '/:round?/match',
+    path: '/:round/match',
     name: 'Match-index',
     component: () => import('../views/Match-index.vue')
   },
   {
-    path: '/:round?/match/:id',
+    path: '/:round/match/:id',
     name: 'Match',
     component: () => import('../views/Match.vue')
   },
   {
-    path: '/:round?/history/:id',
+    path: '/:round/history/:id',
     name: 'History',
     component: () => import('../views/History.vue')
   },
   {
-    path: '/:round?/player/:id',
+    path: '/:round/player/:id',
     name: 'Player',
     component: () => import('../views/Player.vue')
   },

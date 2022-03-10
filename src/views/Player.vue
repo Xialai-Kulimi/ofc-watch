@@ -35,10 +35,10 @@
               <tbody>
               <tr v-for="summary in player.report_summary" v-bind:key="summary" :class="summary.spe">
                 <td>{{format_time(summary.time)}}</td>
-                <td><router-link class="player-link" :to="'/match/'+summary.match_id">{{summary.match_id}}</router-link></td>
-                <td>{{summary.atk_f}} 的 <a class="player-link" :href="'/player/'+summary.atk_id"
+                <td><router-link class="player-link" :to="'/'+$route.params.round+'/match/'+summary.match_id">{{summary.match_id}}</router-link></td>
+                <td>{{summary.atk_f}} 的 <a class="player-link" :href="'/'+$route.params.round+'/player/'+summary.atk_id"
                 >{{summary.atk_name}}</a></td>
-                <td>{{summary.def_f}} 的 <a class="player-link" v-if="summary.def_name" :href="'/player/'+summary.def_id">{{summary.def_name}}</a>{{(summary.def_name) ? none : "牆壁"}}</td>
+                <td>{{summary.def_f}} 的 <a class="player-link" v-if="summary.def_name" :href="'/'+$route.params.round+'/player/'+summary.def_id">{{summary.def_name}}</a>{{(summary.def_name) ? none : "牆壁"}}</td>
                 <td>{{(summary.floor === "衛兵") ? "衛兵": ("在"+summary.def_f)+"第"+summary.floor+"層"}}</td>
                 <td><router-link class="player-link" v-bind:to="compose_report_link(summary.id)">{{summary.id}}</router-link></td>
               </tr>
