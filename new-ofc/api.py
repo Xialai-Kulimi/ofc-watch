@@ -5,7 +5,6 @@ from dotenv import load_dotenv
 import os
 load_dotenv()
 
-
 app = flask.Flask(__name__)
 mgclient = pymongo.MongoClient(os.getenv('dbconnect'))
 
@@ -13,18 +12,23 @@ ofc_db = mgclient.ofc
 data_collection = ofc_db.data
 
 
-@app.route('//<round>')
-@app.route('//<round>/<param>')
-@app.route('//<round>/<param>/<id>')
-def text(round, param='', id=0):
-    if (param=='' and id==0):
-        result = data_collection.find_one({"name": round})
-        if result:
-            return flask.Response(json.dumps(result['data']), mimetype='application/json')
+@app.route('//<_round>')
+@app.route('//<_round>/<param>')
+@app.route('//<_round>/<param>/<id>')
+def api(_round, param = '', _id = -1):
+    if (_id != -1):
+        round_db = mgclient[f'ofc{_round}'.replace('.', '-')]
+        data_collection = round_db[param]
+        result = data_collection.find_one({"_id": _id})
+        return flask.Response(json.dumps(result), mimetype='application/json')
+    elif (param != ''):
+        round_db = mgclient[f'ofc{_round}'.replace('.', '-')]
+        data_collection = round_db['data']
+        result = data_collection.find_one({"_id": param})
+        return flask.Response(json.dumps(result['data']), mimetype='application/json')
+    else:
+        result = data_collection.find_one({"_id": _round})
+        return flask.Response(json.dumps(result['data']), mimetype='application/json')
 
-    round_db = mgclient[f'ofc{_round}'.replace('.', '-')]
-    return flask.Response(json.dumps(t), mimetype='application/json')
 
-
-if __name__ == '__main__':
-    app.run(port=9000)
+app.run(port=9000)
