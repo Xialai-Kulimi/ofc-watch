@@ -14,7 +14,7 @@ data_collection = ofc_db.data
 
 @app.route('//<_round>')
 @app.route('//<_round>/<param>')
-@app.route('//<_round>/<param>/<id>')
+@app.route('//<_round>/<param>/<_id>')
 def api(_round, param = '', _id = -1):
 
     if (_id != -1):
