@@ -4,10 +4,12 @@
         fluid
         row
         class="align-center justify-center"
+
     >
 
         <v-card
             style="width: 100%;display: flex"
+            v-if="loading"
             class="pa-10 ma-5 justify-center align-center flex-column"
         >
 
@@ -204,8 +206,13 @@
   </v-container>
 </v-container>
         </v-card>
-
+      <v-skeleton-loader
+          v-bind="!loading"
+          style="width: 100%"
+          type="card-avatar, article, actions"
+      ></v-skeleton-loader>
     </v-container>
+
   </v-container>
 </template>
 
@@ -213,10 +220,13 @@
 // @ is an alias to /src
 
 
+import api from "@/api";
+
 export default {
   name: 'Home',
   data() {
     return {
+      loading: false,
       benched: 0,
       events: [
         {
@@ -488,8 +498,11 @@ export default {
       ]
     }
   },
-  mounted() {
-
+  mounted: async function() {
+    this.events = await api.getData( this.$route.params.round +"/events")
+    this.hunts = await api.getData( this.$route.params.round +"/hunts")
+    this.weapon_type_count = await api.getData( this.$route.params.round +"/weapon_type_count")
+    this.loading = true
 
   },
   components: {
