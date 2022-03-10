@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-card>
+    <v-card v-if="loading">
 
       <v-tabs
           v-model="tab"
@@ -52,16 +52,24 @@
         </v-tab-item>
       </v-tabs-items>
     </v-card>
+    <v-skeleton-loader
+        v-bind="!loading"
+        style="width: 100%"
+        type="card-avatar, article, actions"
+    ></v-skeleton-loader>
   </v-container>
 </template>
 <script>
 // @ is an alias to /src
 
 
+import api from "@/api";
+
 export default {
   name: 'Home',
   data() {
     return {
+      loading: false,
       tab: "",
       data_list: [
         {
@@ -121,9 +129,10 @@ export default {
       ]
     }
   },
-  mounted() {
+  mounted: async function() {
 
-
+    this.data_list = await api.getData( this.$route.params.round +"/leaderboard")
+    this.loading = true
   },
   methods: {
     generate_link(id){
