@@ -53,7 +53,6 @@
               <tr><th>HP</th><td>{{report.report.messages.stats.b.hp}}</td></tr>
               <tr v-if="report.report.messages.stats.b.atk"><th>攻擊</th><td>{{report.report.messages.stats.b.atk}}</td></tr>
               <tr v-if="report.report.messages.stats.b.def"><th>防禦</th><td>{{report.report.messages.stats.b.def}}</td></tr>
-              <tr><th>HP</th><td>{{report.report.messages.stats.b.hp}}</td></tr>
               <tr><th>熟練</th><td>{{report.report.messages.stats.b.fightExp}}</td></tr>
               <tr v-if="report.report.bId"><th>ID</th><td>{{report.report.bId}}</td></tr>
               <tr><th>裝備</th><td><p v-for="(item) in report.report.messages.stats.b.equipments" :key="item">
