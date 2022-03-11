@@ -32,18 +32,17 @@ while True:
 
 	try:
 		for i in report_list:
-			anautils.leaderboard(i)
 			anautils.player(i)
 			anautils.match(i)
 			anautils.weapon(i)
 			anautils.hunt(i)
 
-
-
 	except Exception as e:
 		print(i)
 		print(e)
 		exit()
+
+	anautils.unify()
 
 	ofc_db['data'].update_one({'_id': 'data'}, {"$set": {'last_work_report': i['_id']}})
 
