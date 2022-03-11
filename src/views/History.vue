@@ -46,8 +46,8 @@
             <template v-slot:default>
 
               <tbody>
-              <tr><th>陣營</th><td>{{report.report.bFactionName}}</td></tr>
-              <tr><th>玩家</th><td><router-link :to="compose_player_link(report.report.bId)">{{report.report.messages.stats.b.name}}</router-link></td></tr>
+              <tr v-if="report.report.bFactionName"><th>陣營</th><td>{{report.report.bFactionName}}</td></tr>
+              <tr><th>玩家</th><td><router-link v-if="report.report.bId" :to="compose_player_link(report.report.bId)">{{report.report.messages.stats.b.name}}</router-link><div v-if="!report.report.bId">report.report.messages.stats.b.name</div></td></tr>
               <tr><th>職業</th><td>{{report.report.messages.stats.b.role}}</td></tr>
               <tr v-if="report.report.messages.stats.b.role2"><th>副職</th><td>{{report.report.messages.stats.b.role2}}</td></tr>
               <tr><th>HP</th><td>{{report.report.messages.stats.b.hp}}</td></tr>
