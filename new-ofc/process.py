@@ -29,14 +29,20 @@ if not ofc_db['data'].find_one({'_id': 'data'}):
 while True:
 	ofc_data = ofc_db['data'].find_one({'_id': 'data'})
 	last_work_report = ofc_data['last_work_report']
-	report_list = report_collection.find({'_id': {'$gt': last_work_report}}).sort('_id')
-
+	report_list = report_collection.find({'_id': {'$gt': last_work_report}}, limit=100).sort('_id')
+	for i in report_list:
+		anautils.player(i)
+		anautils.match(i)
+		anautils.weapon(i)
+		anautils.hunt(i)
+		ofc_db['data'].update_one({'_id': 'data'}, {"$set": {'last_work_report': i['_id']}})
 	try:
-		for i in report_list:
-			anautils.player(i)
-			anautils.match(i)
-			anautils.weapon(i)
-			anautils.hunt(i)
+		pass
+		# for i in report_list:
+		# 	anautils.player(i)
+		# 	anautils.match(i)
+		# 	anautils.weapon(i)
+		# 	anautils.hunt(i)
 
 	except Exception as e:
 		print(i)
@@ -45,6 +51,6 @@ while True:
 
 	anautils.unify()
 
-	ofc_db['data'].update_one({'_id': 'data'}, {"$set": {'last_work_report': i['_id']}})
+
 
 	time.sleep(1)

@@ -7,6 +7,7 @@ def anautils(db, _config_db):
 	player_collection = ofc_db['player']
 	match_collection = ofc_db['match']
 	report_collection = ofc_db['report']
+	data_collection.insert_one({'_id': 'leaderboard'})
 
 
 def test():
@@ -80,6 +81,7 @@ def a_gain_xp(report):
 			else:
 				if m['m'].startswith(report['report']['aName']):
 					return int(m['m'].split(' ')[-2])
+	return 0
 
 
 def b_gain_xp(report):
@@ -87,6 +89,7 @@ def b_gain_xp(report):
 		if m['m'].endswith('點經驗值') and m['s'] == 'info':
 			if m['m'].startswith(report['report']['bName']):
 				return int(m['m'].split(' ')[-2])
+	return 0
 
 
 def a_deal_damage(report):
@@ -97,16 +100,17 @@ def a_deal_damage(report):
 	else:
 		damage = 0
 		for m in messages(report):
-			if m['m'].endswith('點傷害') and m['m'].split(' ')[-3].endswith(f"對{report_stat(report)['b'][name]}造成"):
+			if m['m'].endswith('點傷害') and m['m'].split(' ')[-3].endswith(f"對{report_stat(report)['b']['name']}造成"):
 				damage += int(m['m'].split(' ')[-2])
 		return damage
+	return 0
 
 
 def b_deal_damage(report):
-	assert (not report_is_hunt) and (not report_is_wall)
+	assert (not report_is_hunt(report)) and (not report_is_wall(report))
 	damage = 0
 	for m in messages(report):
-		if m['m'].endswith('點傷害') and m['m'].split(' ')[-3].endswith(f"對{report_stat(report)['a'][name]}造成"):
+		if m['m'].endswith('點傷害') and m['m'].split(' ')[-3].endswith(f"對{report_stat(report)['a']['name']}造成"):
 			damage += int(m['m'].split(' ')[-2])
 	return damage
 
@@ -137,11 +141,13 @@ def player(report):
 	aId = report['report']['aId']
 	bId = report['report'].get('bId')
 
-	player_stat_set(aId, 'role', report_stat['a']['role'])
-	if report_stat['a'].get('role2'):
-		player_stat_set(aId, 'role2', report_stat['a']['role2'])
-	player_stat_set(aId, faction, report['report']['aFactionName'])
-	player_stat_set(aId, 'all_xp', report_stat['a']['fightExp'])
+	player_stat_set(aId, 'name', report_stat(report)['a']['name'])
+	player_stat_set(aId, 'role', report_stat(report)['a']['role'])
+	if report_stat(report)['a'].get('role2'):
+		player_stat_set(aId, 'role2', report_stat(report)['a']['role2'])
+	player_stat_set(aId, 'faction', report['report']['aFactionName'])
+	player_stat_set(aId, 'all_xp', report_stat(report)['a']['fightExp'])
+
 
 	if report_is_hunt(report):
 		player_stat_add(aId, 'hunt_xp', a_gain_xp(report))
@@ -152,16 +158,17 @@ def player(report):
 			player_stat_add(aId, 'wall_damage', a_deal_damage(report))
 
 		else:
-			player_stat_set(bId, 'all_xp', report_stat['b']['fightExp'])
+			player_stat_set(bId, 'name', report_stat(report)['b']['name'])
+			player_stat_set(bId, 'all_xp', report_stat(report)['b']['fightExp'])
 
 			player_stat_add(aId, 'battle_xp', a_gain_xp(report))
 			player_stat_add(bId, 'battle_xp', b_gain_xp(report))
 			
-			player_stat_set(bId, 'role', report_stat['b']['role'])
-			if report_stat['b'].get('role2'):
-				player_stat_set(bId, 'role2', report_stat['b']['role2'])
+			player_stat_set(bId, 'role', report_stat(report)['b']['role'])
+			if report_stat(report)['b'].get('role2'):
+				player_stat_set(bId, 'role2', report_stat(report)['b']['role2'])
 
-			player_stat_set(bId, faction, report['report']['bFactionName'])
+			player_stat_set(bId, 'faction', report['report']['bFactionName'])
 
 			if a_died(report):
 				player_stat_add(aId, 'bekill', 1)
@@ -194,7 +201,7 @@ def hunt(report):
 
 def unify():
 	leaderboard = []
-	for board in config_db.find_one({_id: 'config'})['leaderboard']:
+	for board in config_db.data.find_one({'_id': 'config'})['leaderboard']:
 		this_board = {}
 		this_board['name'] = board['name']
 		board_list = [{
@@ -202,9 +209,9 @@ def unify():
 			'name': p['name'],
 			'id': p['_id'],
 			'count': p[board['field']]
-		} for p in player_collection.find().sort(board['field'])]
+		} for p in player_collection.find().sort([(board['field'], -1)])]
 		this_board['json'] = board_list
 		leaderboard.append(this_board)
 
-	data_collection.insert_one({'_id': 'leaderboard', 'data': leaderboard}, )
+	data_collection.update_one({'_id': 'leaderboard'}, {"$set": {'data': leaderboard}})
 
