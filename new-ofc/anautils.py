@@ -92,12 +92,12 @@ def b_gain_xp(report):
 def a_deal_damage(report):
 	if report_is_wall(report):
 		for m in messages(report):
-			if m['m'].split(' ')[0] == f'{report_stat(report)['a']['name']}直接攻擊城堡，造成':
+			if m['m'].split(' ')[0] == f"{report_stat(report)['a']['name']}直接攻擊城堡，造成":
 				return int(m['m'].split(' ')[-2])
 	else:
 		damage = 0
 		for m in messages(report):
-			if m['m'].endswith('點傷害') and m['m'].split(' ')[-3].endswith(f'對{report_stat(report)['b'][name]}造成'):
+			if m['m'].endswith('點傷害') and m['m'].split(' ')[-3].endswith(f"對{report_stat(report)['b'][name]}造成"):
 				damage += int(m['m'].split(' ')[-2])
 		return damage
 
@@ -106,7 +106,7 @@ def b_deal_damage(report):
 	assert (not report_is_hunt) and (not report_is_wall)
 	damage = 0
 	for m in messages(report):
-		if m['m'].endswith('點傷害') and m['m'].split(' ')[-3].endswith(f'對{report_stat(report)['a'][name]}造成'):
+		if m['m'].endswith('點傷害') and m['m'].split(' ')[-3].endswith(f"對{report_stat(report)['a'][name]}造成"):
 			damage += int(m['m'].split(' ')[-2])
 	return damage
 
@@ -121,14 +121,14 @@ def b_take_damage(report):
 
 def a_died(report):
 	for m in messages(report):
-		if m['m'].split(' ')[0] == f'{report_stat(report)['a']['name']}被擊殺死亡了，{report_stat(report)['b']['name']}還有' and m['s'] == 'critical':
+		if m['m'].split(' ')[0] == f"{report_stat(report)['a']['name']}被擊殺死亡了，{report_stat(report)['b']['name']}還有" and m['s'] == 'critical':
 			return True
 	return False
 
 
 def b_died(report):
 	for m in messages(report):
-		if m['m'].split(' ')[0] == f'{report_stat(report)['b']['name']}被擊殺死亡了，{report_stat(report)['a']['name']}還有' and m['s'] == 'critical':
+		if m['m'].split(' ')[0] == f"{report_stat(report)['b']['name']}被擊殺死亡了，{report_stat(report)['a']['name']}還有" and m['s'] == 'critical':
 			return True
 	return False
 
