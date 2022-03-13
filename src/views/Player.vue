@@ -125,7 +125,7 @@ export default {
     }
   },
   mounted: async function () {
-    this.player = await api.getData( this.$route.params.round +"/player"+this.$route.params.id)
+    this.player = await api.getData( this.$route.params.round +"/player/"+this.$route.params.id)
     this.loading = true
   },
   methods:{
