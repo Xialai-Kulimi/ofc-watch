@@ -13,7 +13,8 @@ mgclient = pymongo.MongoClient(os.getenv('dbconnect'))
 ofc_db = mgclient[f'ofc{_round}'.replace('.', '-')]
 report_collection = ofc_db['report']
 
-anautils.ofc_db = ofc_db
+
+anautils.anautils(ofc_db, mgclient.ofc)
 
 if not ofc_db['data'].find_one({'_id': 'data'}):
 	print(f'Detect new round: {_round}')
@@ -28,7 +29,7 @@ if not ofc_db['data'].find_one({'_id': 'data'}):
 while True:
 	ofc_data = ofc_db['data'].find_one({'_id': 'data'})
 	last_work_report = ofc_data['last_work_report']
-	report_list = report_collection.find({'_id': {'$gt': last_work_report}}, limit=100).sort('_id')
+	report_list = report_collection.find({'_id': {'$gt': last_work_report}}).sort('_id')
 
 	try:
 		for i in report_list:
