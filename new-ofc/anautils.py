@@ -1,8 +1,8 @@
 
-def anautils(db, config_db):
+def anautils(db, _config_db):
 	global ofc_db, config_db, data_collection, player_collection, match_collection, report_collection
 	ofc_db = db
-	config_db = config_db
+	config_db = _config_db
 	data_collection = ofc_db['data']
 	player_collection = ofc_db['player']
 	match_collection = ofc_db['match']
