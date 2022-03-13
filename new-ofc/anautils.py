@@ -47,12 +47,12 @@ def check_or_create_player(_id):
 
 
 
-def player_stat_add(_id, field, amount)
+def player_stat_add(_id, field, amount):
 	check_or_create_player(_id)
 	player_collection.update_one({'_id': _id}, {"$inc": {field: amount}})
 
 
-def player_stat_set(_id, field, amount)
+def player_stat_set(_id, field, amount):
 	check_or_create_player(_id)
 	player_collection.update_one({'_id': _id}, {"$set": {field: amount}})
 
