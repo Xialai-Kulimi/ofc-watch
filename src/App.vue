@@ -54,6 +54,23 @@
 
       >Copyright © {{ new Date().getFullYear() }}  ofc-watch.kulimi.tw All rights reserved.</v-card-text>
     </v-footer>
+    <v-snackbar
+        v-model="snackbar"
+        timeout="5000"
+    >
+      {{ text }}
+
+      <template v-slot:action="{ attrs }">
+        <v-btn
+            color="pink"
+            text
+            v-bind="attrs"
+            @click="snackbar = false"
+        >
+          關閉
+        </v-btn>
+      </template>
+    </v-snackbar>
   </v-app>
 </template>
 
@@ -65,6 +82,8 @@ export default {
   data() {
     return {
       search_text: "",
+      snackbar: false,
+      text: '',
       round: {},
       round_options: [
         {text: '第四輪', value: '4'},
@@ -97,6 +116,10 @@ export default {
         else{
           router.replace("/" + localStorage.round + "/" + path)
         }
+      }
+      else {
+        this.text = '請選擇輪數'
+        this.snackbar = true
       }
 
 
