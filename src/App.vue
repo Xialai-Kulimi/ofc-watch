@@ -100,9 +100,9 @@ export default {
       links: [
         {label: 'OFC WATCH', path: ""},
         {label: '玩家', path: "player"},
-        {label: '會戰', path: "match"},
-        {label: '搜尋', path: "search"},
-        {label: '武具大賞', path: "weapon"},
+        // {label: '會戰', path: "match"},
+        // {label: '搜尋', path: "search"},
+        // {label: '武具大賞', path: "weapon"},
         {label: '關於', path: "about"},
       ],
     }
