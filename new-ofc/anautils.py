@@ -7,7 +7,10 @@ def anautils(db, _config_db):
 	player_collection = ofc_db['player']
 	match_collection = ofc_db['match']
 	report_collection = ofc_db['report']
-	data_collection.insert_one({'_id': 'leaderboard'})
+	try:
+		data_collection.insert_one({'_id': 'leaderboard'})
+	except:
+		pass
 
 
 def test():
