@@ -29,7 +29,7 @@ if not ofc_db['data'].find_one({'_id': 'data'}):
 while True:
 	ofc_data = ofc_db['data'].find_one({'_id': 'data'})
 	last_work_report = ofc_data['last_work_report']
-	report_list = report_collection.find({'_id': {'$gt': last_work_report}}, limit=100).sort('_id')
+	report_list = report_collection.find({'_id': {'$gt': last_work_report}}).sort('_id')
 	for i in report_list:
 		anautils.player(i)
 		anautils.match(i)
