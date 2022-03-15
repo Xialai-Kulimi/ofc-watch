@@ -7,10 +7,14 @@ def anautils(db, _config_db):
 	player_collection = ofc_db['player']
 	match_collection = ofc_db['match']
 	report_collection = ofc_db['report']
-	try:
-		data_collection.insert_one({'_id': 'leaderboard'})
-	except:
-		pass
+
+	data_collection.delete_many({})
+
+	data_collection.insert_one({'_id': 'leaderboard'})
+	data_collection.insert_one({'_id': 'events'})
+	data_collection.insert_one({'_id': 'hunts'})
+	data_collection.insert_one({'_id': 'weapon_type_count'})
+
 
 
 def test():
@@ -140,7 +144,28 @@ def b_died(report):
 	return False
 
 
+def check_and_add_event(report):
+	event_text = ''
+	if report_is_wall(report):
+		for m in messages(report):
+			if m['m'].endswith('點傷害') and m['m'].split(' ')[-3].endswith(f"對{report_stat(report)['b']['name']}造成"):
+
+
+	elif report_is_hunt(report):
+		pass
+	else:
+		pass
+
+	if event_text:
+		pass
+
+
+
+
 def player(report):
+
+	check_and_add_event(report)
+
 	aId = report['report']['aId']
 	bId = report['report'].get('bId')
 
@@ -179,6 +204,7 @@ def player(report):
 			if b_died(report):
 				player_stat_add(bId, 'bekill', 1)
 				player_stat_add(aId, 'kill', 1)
+
 			
 			player_stat_add(aId, 'damage', a_deal_damage(report))
 			player_stat_add(bId, 'damage', b_deal_damage(report))
