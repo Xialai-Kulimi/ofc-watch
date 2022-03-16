@@ -1,4 +1,5 @@
 
+
 def anautils(db, _config_db):
 	global ofc_db, config_db, data_collection, player_collection, match_collection, report_collection
 	ofc_db = db
@@ -7,6 +8,7 @@ def anautils(db, _config_db):
 	player_collection = ofc_db['player']
 	match_collection = ofc_db['match']
 	report_collection = ofc_db['report']
+	weapon_collection = ofc_db['weapon']
 
 	data_collection.delete_many({})
 
@@ -28,6 +30,34 @@ def get_player_db(_id):
 def check_or_create_player(_id):
 	if (player_collection.find_one({'_id': _id}) == None):
 		player_collection.insert_one(
+			{
+				'_id': _id,
+				'name': '',
+				'role': '',
+				'role2': '',
+				'faction': '',
+				'weapon': [],
+				'stat': '',
+				'kill': 0,
+				'bekill': 0,
+				'damage': 0,
+				'bedamage': 0,
+				'wall_damage': 0,
+				'all_xp': 0,
+				'battle_xp': 0,
+				'adventure_xp': 0,
+				'hunt_xp': 0,
+				'battle_count': 0,
+				'hunt_count': 0,
+				'now_hunt': [],
+				'hunts': [],
+				'report_summary': []
+			}
+		)
+
+def check_or_create_weapon(_id):
+	if (weapon_collection.find_one({'_id': _id}) == None):
+		weapon_collection.insert_one(
 			{
 				'_id': _id,
 				'name': '',
@@ -78,6 +108,10 @@ def report_is_hunt(report):
 
 def report_is_wall(report):
 	return (not report_is_hunt(report)) and (not report['report'].get('bId'))
+
+
+def report_is_solo(report):
+	return report_is_hunt(report) or report_is_wall(report)
 
 
 def a_gain_xp(report):
@@ -144,27 +178,33 @@ def b_died(report):
 	return False
 
 
-def check_and_add_event(report):
-	event_text = ''
-	if report_is_wall(report):
-		for m in messages(report):
-			if m['m'].endswith('點傷害') and m['m'].split(' ')[-3].endswith(f"對{report_stat(report)['b']['name']}造成"):
 
 
-	elif report_is_hunt(report):
-		pass
-	else:
-		pass
 
-	if event_text:
-		pass
-
+class Report():
+	def __init__(self, report):
+		self.report = report
+		self.stat = report_stat(report)
+		self.messages = messages(report)
+		self.is_hunt = report_is_hunt(report)
+		self.is_wall = report_is_wall(report)
+		self.is_solo = report_is_solo(report)
+		self.a_gain_xp = a_gain_xp(report)
+		self.b_gain_xp = b_gain_xp(report)
+		self.a_deal_damage = a_deal_damage(report)
+		self.b_deal_damage = b_deal_damage(report)
+		self.a_take_damage = a_take_damage(report)
+		self.b_take_damage = b_take_damage(report)
+		self.a_died = a_died(report)
+		self.b_died = b_died(report)
+		self.a = self.stat.a
+		self.b = self.stat.b
 
 
 
 def player(report):
 
-	check_and_add_event(report)
+	# check_and_add_event(report)
 
 	aId = report['report']['aId']
 	bId = report['report'].get('bId')
@@ -221,7 +261,10 @@ def match(report):
 
 
 def weapon(report):
-	pass
+	if report_is_hunt(report):
+	else:
+		for p in report_stat(report):
+
 
 
 def hunt(report):
