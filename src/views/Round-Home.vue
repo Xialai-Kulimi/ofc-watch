@@ -27,10 +27,36 @@
       width="500"
 
   >
-    <v-card-title>最新事件</v-card-title>
+    <v-card-title>最新狩獵戰報</v-card-title>
     <v-virtual-scroll
         :bench="5"
-        :items="events"
+        :items="hunt_events"
+        height="400"
+        item-height="32"
+    >
+      <template v-slot:default="{ item }">
+        <v-list-item
+            :key="item"
+            link
+            dense
+            color="red"
+            :to="item.link"
+        >
+          {{item.text}}
+        </v-list-item>
+      </template>
+    </v-virtual-scroll>
+  </v-container>
+
+  <v-container
+      class="ma-5"
+      width="500"
+
+  >
+    <v-card-title>最新攻城戰報</v-card-title>
+    <v-virtual-scroll
+        :bench="5"
+        :items="castle_events"
         height="400"
         item-height="32"
     >
@@ -226,9 +252,122 @@ export default {
   name: 'Home',
   data() {
     return {
-      loading: false,
+      loading: true,
       benched: 0,
-      events: [
+      hunt_events: [
+        {
+          text: "Kulimi died",
+          color: "red",
+          link: "/12/history/545454"
+        },
+        {
+          text: "Kulimi died",
+          color: "FF0000",
+          link: "/12/545454"
+        },
+        {
+          text: "Kulimi died",
+          color: "red",
+          link: "/12/545454"
+        },
+        {
+          text: "Kulimi died",
+          color: "red",
+          link: "/12/545454"
+        },
+        {
+          text: "Kulimi died",
+          color: "red",
+          link: "/12/545454"
+        },
+        {
+          text: "Kulimi died",
+          color: "red",
+          link: "/12/545454"
+        },
+        {
+          text: "Kulimi died",
+          color: "red",
+          link: "/12/545454"
+        },
+        {
+          text: "Kulimi died",
+          color: "red",
+          link: "/12/545454"
+        },
+        {
+          text: "Kulimi died",
+          color: "red",
+          link: "/12/545454"
+        },
+        {
+          text: "Kulimi died",
+          color: "red",
+          link: "/12/545454"
+        },
+        {
+          text: "Kulimi died",
+          color: "red",
+          link: "/12/545454"
+        },
+        {
+          text: "Kulimi died",
+          color: "red",
+          link: "/12/545454"
+        },
+        {
+          text: "Kulimi died",
+          color: "red",
+          link: "/12/545454"
+        },
+        {
+          text: "Kulimi died",
+          color: "red",
+          link: "/12/545454"
+        },
+        {
+          text: "Kulimi died",
+          color: "black",
+          link: "/12/545454"
+        },
+        {
+          text: "Kulimi died",
+          color: "gray",
+          link: "/12/545454"
+        },
+        {
+          text: "Kulimi died",
+          color: "danger",
+          link: "/12/545454"
+        },
+        {
+          text: "Kulimi died",
+          color: "danger",
+          link: "/12/545454"
+        },
+        {
+          text: "Kulimi died",
+          color: "danger",
+          link: "/12/545454"
+        },
+        {
+          text: "fsdf died",
+          color: "info",
+          link: "/12/54fff5454"
+        },
+        {
+          text: "Kulimi died",
+          color: "danger",
+          link: "/12/545454"
+        },
+        {
+          text: "Kulimi died",
+          color: "danger",
+          link: "/12/545454"
+        },
+
+      ],
+      castle_events: [
         {
           text: "Kulimi died",
           color: "red",
@@ -499,7 +638,8 @@ export default {
     }
   },
   mounted: async function() {
-    this.events = await api.getData( this.$route.params.round +"/events")
+    this.hunt_events = await api.getData( this.$route.params.round +"/hunt_events")
+    this.castle_events = await api.getData( this.$route.params.round +"/castle_events")
     this.hunts = await api.getData( this.$route.params.round +"/hunts")
     this.weapon_type_count = await api.getData( this.$route.params.round +"/weapon_type_count")
     this.loading = true
