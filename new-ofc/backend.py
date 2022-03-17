@@ -49,5 +49,5 @@ def api(_round, param = 'none', _id = '-1'):
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def catch_all(path):
-    return render_template("index.html")
+    return flask.render_template("index.html")
 
