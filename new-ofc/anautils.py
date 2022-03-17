@@ -217,7 +217,7 @@ def report_summary(report):
 			if m.get('s') == 'critical' or m['m'].split(' ')[0] == f"{report_stat(report)['a']['name']}直接攻擊城堡，造成":
 				return m['m']
 
-	elif report_is_hunt():
+	elif report_is_hunt(report):
 		if not (a_died(report) or b_died(report)):
 			for m in messages(report):
 				if m.get('s') == 'info':
