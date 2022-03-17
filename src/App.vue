@@ -135,7 +135,7 @@ export default {
   },
   mounted: async function () {
 
-    if (this.$route.path === '/'){
+    if (window.location.pathname === '/'){
       if (localStorage.round) {
         this.round = localStorage.round
         await router.replace("/" + this.round)
@@ -147,15 +147,7 @@ export default {
       }
     }
 
-
-    setInterval(() => {
-      if (this.$route.params.round === 'undefined'){
-        this.router.replace('/')
-      }
-    }, 1000)
     this.round_options = await api.getData("round_options")
-    // this.change_round()
-
   }
 
 }
