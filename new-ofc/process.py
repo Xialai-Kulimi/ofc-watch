@@ -31,10 +31,11 @@ while True:
 	last_work_report = ofc_data['last_work_report']
 	report_list = report_collection.find({'_id': {'$gt': last_work_report}}).sort('_id')
 	for i in report_list:
-		anautils.player(i)
-		anautils.match(i)
-		anautils.weapon(i)
-		anautils.hunt(i)
+		report = anautils.Report(i)
+		anautils.player(report)
+		anautils.match(report)
+		anautils.weapon(report)
+		anautils.hunt(report)
 		ofc_db['data'].update_one({'_id': 'data'}, {"$set": {'last_work_report': i['_id']}})
 	try:
 		pass

@@ -137,19 +137,14 @@ export default {
 
     if (localStorage.round) {
       this.round = localStorage.round
+      await router.replace("/" + this.round)
     }
     else {
       localStorage.round = this.round_options[this.round_options.length - 1].value
       this.round = this.round_options[this.round_options.length - 1]
+      await router.replace("/" + this.round)
     }
-
-    if (this.$route.path === '/') {
-      this.round = this.$route.params.round
-      localStorage.round = this.$route.params.round
-    }
-    else {
-      this.router.replace('/'+this.round)
-    }
+    
     setInterval(() => {
       if (this.$route.params.round === 'undefined'){
         this.router.replace('/')
