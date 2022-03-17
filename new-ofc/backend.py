@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 import os
 load_dotenv()
 
-app = flask.Flask(__name__, static_folder = "./dist/static", template_folder = "./dist")
+app = flask.Flask(__name__, static_folder = "./../dist/static", template_folder = "./../dist")
 mgclient = pymongo.MongoClient(os.getenv('dbconnect'))
 
 ofc_db = mgclient.ofc
