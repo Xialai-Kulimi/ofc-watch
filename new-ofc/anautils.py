@@ -1,7 +1,15 @@
+import hashlib
+
+
+def sha256(text):
+	h = hashlib.new('sha256')
+	h.update(bytes(text, 'utf8'))
+	return h.hexdigest()
+
 
 
 def anautils(db, _config_db):
-	global ofc_db, config_db, data_collection, player_collection, match_collection, report_collection
+	global ofc_db, config_db, data_collection, player_collection, match_collection, report_collection, weapon_collection, _round
 	ofc_db = db
 	config_db = _config_db
 	data_collection = ofc_db['data']
@@ -10,12 +18,14 @@ def anautils(db, _config_db):
 	report_collection = ofc_db['report']
 	weapon_collection = ofc_db['weapon']
 
+	_round = ofc_db.name.replace('ofc', '').replace('-', '.')
+
 	data_collection.delete_many({})
 
 	data_collection.insert_one({'_id': 'leaderboard'})
 	data_collection.insert_one({'_id': 'events'})
 	data_collection.insert_one({'_id': 'hunts'})
-	data_collection.insert_one({'_id': 'weapon_type_count'})
+	data_collection.insert_one({'_id': 'weapon_type_count', 'data': []})
 
 
 
@@ -55,33 +65,35 @@ def check_or_create_player(_id):
 			}
 		)
 
-def check_or_create_weapon(_id):
+def get_equipment_id(equipment):
+	return sha256(str(equipment))
+	
+
+
+def check_or_create_equipment(equipment):
+	_id = get_equipment_id(equipment)
+	# {'name': '凌苳苳苳苳苳苳', 'quality': '傳說', 'type': '雙手劍', 'atk': 1517, 'def': 2963, 'minePower': 1096}
 	if (weapon_collection.find_one({'_id': _id}) == None):
-		weapon_collection.insert_one(
-			{
-				'_id': _id,
-				'name': '',
-				'role': '',
-				'role2': '',
-				'faction': '',
-				'weapon': [],
-				'stat': '',
-				'kill': 0,
-				'bekill': 0,
-				'damage': 0,
-				'bedamage': 0,
-				'wall_damage': 0,
-				'all_xp': 0,
-				'battle_xp': 0,
-				'adventure_xp': 0,
-				'hunt_xp': 0,
-				'battle_count': 0,
-				'hunt_count': 0,
-				'now_hunt': [],
-				'hunts': [],
-				'report_summary': []
-			}
-		)
+		equipment_base = {'_id': _id, 'count': 1, 'round': _round}
+		equipment_base['data'] = equipment
+		weapon_collection.insert_one(equipment_base)
+
+
+def add_equipments_appear_count(equipment):
+	_id = get_equipment_id(equipment)
+	weapon_collection.update_one({'_id': _id}, {"$inc": {'count': 1}})
+
+
+def equipment_type_add(equipment):
+	weapon_type_count = data_collection.find_one({'_id': 'weapon_type_count'})['data']
+	if equipment['type'] not in [t['name'] for t in weapon_type_count]:
+		weapon_type_count.append({'name': equipment['type'], 'count': 1})
+	else:
+		for t in weapon_type_count:
+			if t['name'] == equipment['type']:
+				t['count'] += 1
+	data_collection.update_one({'_id': 'weapon_type_count'}, {"$set": {'data': weapon_type_count}})
+
 
 
 
@@ -126,6 +138,8 @@ def a_gain_xp(report):
 
 
 def b_gain_xp(report):
+	if report_is_solo(report):
+		return 0
 	for m in messages(report):
 		if m['m'].endswith('點經驗值') and m['s'] == 'info':
 			if m['m'].startswith(report['report']['bName']):
@@ -148,7 +162,8 @@ def a_deal_damage(report):
 
 
 def b_deal_damage(report):
-	assert (not report_is_hunt(report)) and (not report_is_wall(report))
+	if report_is_solo(report):
+		return 0
 	damage = 0
 	for m in messages(report):
 		if m['m'].endswith('點傷害') and m['m'].split(' ')[-3].endswith(f"對{report_stat(report)['a']['name']}造成"):
@@ -157,7 +172,12 @@ def b_deal_damage(report):
 
 
 def a_take_damage(report):
-	return b_deal_damage(report)
+	if report_is_wall(report):
+		for m in messages(report):
+			if m['m'].split(' ')[0] == f"{report_stat(report)['a']['name']}在攻城過程中消耗了":
+				return int(m['m'].split(' ')[-2])
+	else:
+		return b_deal_damage(report)
 
 
 def b_take_damage(report):
@@ -165,25 +185,35 @@ def b_take_damage(report):
 
 
 def a_died(report):
-	for m in messages(report):
-		if m['m'].split(' ')[0] == f"{report_stat(report)['a']['name']}被擊殺死亡了，{report_stat(report)['b']['name']}還有" and m['s'] == 'critical':
-			return True
-	return False
+	if report_is_wall(report):
+		return a_take_damage(report) >= report_stat(report)['a']['hp']
+	else:
+		for m in messages(report):
+			if m['m'].split(' ')[0] == f"{report_stat(report)['a']['name']}被擊殺死亡了，{report_stat(report)['b']['name']}還有" and m['s'] == 'critical':
+				return True
+		return False
 
 
 def b_died(report):
+	if report_is_wall(report):
+		return False
 	for m in messages(report):
 		if m['m'].split(' ')[0] == f"{report_stat(report)['b']['name']}被擊殺死亡了，{report_stat(report)['a']['name']}還有" and m['s'] == 'critical':
 			return True
 	return False
 
 
-
+def report_equipments(report):
+	equipment_list = []
+	for p in report_stat(report):
+		for e in report_stat(report)[p]['equipments']:
+			equipment_list.append(e)
+	return equipment_list
 
 
 class Report():
 	def __init__(self, report):
-		self.report = report
+		self.report = report['report']
 		self.stat = report_stat(report)
 		self.messages = messages(report)
 		self.is_hunt = report_is_hunt(report)
@@ -197,8 +227,9 @@ class Report():
 		self.b_take_damage = b_take_damage(report)
 		self.a_died = a_died(report)
 		self.b_died = b_died(report)
-		self.a = self.stat.a
-		self.b = self.stat.b
+		self.a = self.stat['a']
+		self.b = self.stat.get('b')
+		self.equipments = report_equipments(report)
 
 
 
@@ -206,51 +237,52 @@ def player(report):
 
 	# check_and_add_event(report)
 
-	aId = report['report']['aId']
-	bId = report['report'].get('bId')
-
-	player_stat_set(aId, 'name', report_stat(report)['a']['name'])
-	player_stat_set(aId, 'role', report_stat(report)['a']['role'])
-	if report_stat(report)['a'].get('role2'):
-		player_stat_set(aId, 'role2', report_stat(report)['a']['role2'])
-	player_stat_set(aId, 'faction', report['report']['aFactionName'])
-	player_stat_set(aId, 'all_xp', report_stat(report)['a']['fightExp'])
+	aId = report.report['aId']
+	bId = report.report.get('bId')
 
 
-	if report_is_hunt(report):
-		player_stat_add(aId, 'hunt_xp', a_gain_xp(report))
+	player_stat_set(aId, 'name', report.a['name'])
+	player_stat_set(aId, 'role', report.a['role'])
+	if report.a.get('role2'):
+		player_stat_set(aId, 'role2', report.a['role2'])
+	player_stat_set(aId, 'faction', report.report['aFactionName'])
+	player_stat_set(aId, 'all_xp', report.a['fightExp'])
+
+
+	if report.is_hunt:
+		player_stat_add(aId, 'hunt_xp', report.a_gain_xp)
 		player_stat_add(aId, 'hunt_count', 1)
 	else:
-		if report_is_wall(report):
-			player_stat_add(aId, 'battle_xp', a_gain_xp(report))
-			player_stat_add(aId, 'wall_damage', a_deal_damage(report))
+		if report.is_wall:
+			player_stat_add(aId, 'battle_xp', report.a_gain_xp)
+			player_stat_add(aId, 'wall_damage', report.a_deal_damage)
 
 		else:
-			player_stat_set(bId, 'name', report_stat(report)['b']['name'])
-			player_stat_set(bId, 'all_xp', report_stat(report)['b']['fightExp'])
+			player_stat_set(bId, 'name', report.b['name'])
+			player_stat_set(bId, 'all_xp', report.b['fightExp'])
 
-			player_stat_add(aId, 'battle_xp', a_gain_xp(report))
-			player_stat_add(bId, 'battle_xp', b_gain_xp(report))
+			player_stat_add(aId, 'battle_xp', report.a_gain_xp)
+			player_stat_add(bId, 'battle_xp', report.b_gain_xp)
 			
-			player_stat_set(bId, 'role', report_stat(report)['b']['role'])
-			if report_stat(report)['b'].get('role2'):
-				player_stat_set(bId, 'role2', report_stat(report)['b']['role2'])
+			player_stat_set(bId, 'role', report.b['role'])
+			if report.b.get('role2'):
+				player_stat_set(bId, 'role2', report.b['role2'])
 
-			player_stat_set(bId, 'faction', report['report']['bFactionName'])
+			player_stat_set(bId, 'faction', report.report['bFactionName'])
 
-			if a_died(report):
+			if report.a_died:
 				player_stat_add(aId, 'bekill', 1)
 				player_stat_add(bId, 'kill', 1)
-			if b_died(report):
+			if report.b_died:
 				player_stat_add(bId, 'bekill', 1)
 				player_stat_add(aId, 'kill', 1)
 
 			
-			player_stat_add(aId, 'damage', a_deal_damage(report))
-			player_stat_add(bId, 'damage', b_deal_damage(report))
+			player_stat_add(aId, 'damage', report.a_deal_damage)
+			player_stat_add(bId, 'damage', report.b_deal_damage)
 
-			player_stat_add(aId, 'bedamage', a_take_damage(report))
-			player_stat_add(bId, 'bedamage', b_take_damage(report))
+			player_stat_add(aId, 'bedamage', report.a_take_damage)
+			player_stat_add(bId, 'bedamage', report.b_take_damage)
 
 			player_stat_add(aId, 'battle_count', 1)
 			player_stat_add(bId, 'battle_count', 1)
@@ -261,9 +293,10 @@ def match(report):
 
 
 def weapon(report):
-	if report_is_hunt(report):
-	else:
-		for p in report_stat(report):
+	for e in report.equipments:
+		check_or_create_equipment(e)
+		add_equipments_appear_count(e)
+		equipment_type_add(e)
 
 
 
