@@ -236,6 +236,11 @@ def report_summary(report):
 				if m.get('s') == 'info':
 					return m['m']
 
+def report_loot(report):
+	if not report_is_hunt(report):
+		return []
+	for m in messages(report)
+
 
 class Report():
 	def __init__(self, report):
@@ -259,6 +264,8 @@ class Report():
 		self.equipments = report_equipments(report)
 		self.summary = report_summary(report)
 		self.time = report['report']['time']
+		self.location = report['report']['location']
+		self.loot = report_loot(report)
 
 
 
@@ -338,7 +345,13 @@ def weapon(report):
 def hunt(report):
 	if not report.is_hunt:
 		return
-	
+	area = ' '.join(report.location.split(' ')[:-1])
+	level = int(report.location.split(' ')[-1])
+
+	hunt_add_count(area, level)
+	monster_add_loot(area, report.b['name'], report.loot)
+
+
 
 
 def unify():
