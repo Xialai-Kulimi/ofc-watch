@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 import os
 load_dotenv()
 
-app = flask.Flask(__name__)
+app = flask.Flask(__name__, static_folder = "./dist/static", template_folder = "./dist")
 mgclient = pymongo.MongoClient(os.getenv('dbconnect'))
 
 ofc_db = mgclient.ofc
@@ -18,9 +18,9 @@ def str_is_safe(strs):
     return True
 
 
-@app.route('//<_round>')
-@app.route('//<_round>/<param>')
-@app.route('//<_round>/<param>/<_id>')
+@app.route('/api/<_round>')
+@app.route('/api/<_round>/<param>')
+@app.route('/api/<_round>/<param>/<_id>')
 def api(_round, param = 'none', _id = '-1'):
     if not (str_is_safe(_round) and str_is_safe(param) and str_is_safe(_id)):
         return flask.Response(json.dumps({'text': 'Unsafe string detected.'}), mimetype='application/json')
@@ -44,4 +44,10 @@ def api(_round, param = 'none', _id = '-1'):
         data_collection = round_db['data']
         result = data_collection.find_one({"_id": _round})
         return flask.Response(json.dumps(result['data']), mimetype='application/json')
+
+
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def catch_all(path):
+    return render_template("index.html")
 
