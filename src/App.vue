@@ -135,15 +135,18 @@ export default {
   },
   mounted: async function () {
 
-    if (localStorage.round) {
-      this.round = localStorage.round
-      await router.replace("/" + this.round)
+    if (this.$route.path === '/'){
+      if (localStorage.round) {
+        this.round = localStorage.round
+        await router.replace("/" + this.round)
+      }
+      else {
+        localStorage.round = this.round_options[this.round_options.length - 1].value
+        this.round = this.round_options[this.round_options.length - 1]
+        await router.replace("/" + this.round)
+      }
     }
-    else {
-      localStorage.round = this.round_options[this.round_options.length - 1].value
-      this.round = this.round_options[this.round_options.length - 1]
-      await router.replace("/" + this.round)
-    }
+
 
     setInterval(() => {
       if (this.$route.params.round === 'undefined'){
