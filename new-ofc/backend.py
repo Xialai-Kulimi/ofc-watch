@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 import os
 load_dotenv()
 
-app = flask.Flask(__name__, static_folder = "./../dist/static", template_folder = "./../dist")
+app = flask.Flask(__name__, static_folder = "./../dist", template_folder = "./../dist")
 mgclient = pymongo.MongoClient(os.getenv('dbconnect'))
 
 ofc_db = mgclient.ofc
@@ -45,9 +45,4 @@ def api(_round, param = 'none', _id = '-1'):
         result = data_collection.find_one({"_id": _round})
         return flask.Response(json.dumps(result['data']), mimetype='application/json')
 
-
-@app.route('/', defaults={'path': ''})
-@app.route('/<path:path>')
-def catch_all(path):
-    return flask.render_template("index.html")
 
