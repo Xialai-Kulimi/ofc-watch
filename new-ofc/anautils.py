@@ -320,9 +320,9 @@ def match(report):
 
 def events(report):
 	if report.is_hunt:
-		data_collection.update_one({'_id': 'hunt_events'}, {'$push': {'$each': [{'text': report.summary, 'time': report.time, 'link': f'/{_round}/history/{report.id}'}]}, '$position': 0})
+		data_collection.update_one({'_id': 'hunt_events'}, {'$push': {'data': {'$each': [{'text': report.summary, 'time': report.time, 'link': f'/{_round}/history/{report.id}'}], '$position': 0}}})
 	else:
-		data_collection.update_one({'_id': 'castle_events'}, {'$push': {'$each': [{'text': report.summary, 'time': report.time, 'link': f'/{_round}/history/{report.id}'}]}, '$position': 0})
+		data_collection.update_one({'_id': 'castle_events'}, {'$push': {'data': {'$each': [{'text': report.summary, 'time': report.time, 'link': f'/{_round}/history/{report.id}'}], '$position': 0}}})
 
 
 
