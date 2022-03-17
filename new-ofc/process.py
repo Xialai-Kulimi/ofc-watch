@@ -34,6 +34,7 @@ while True:
 		report = anautils.Report(i)
 		anautils.player(report)
 		anautils.match(report)
+		anautils.events(report)
 		anautils.weapon(report)
 		anautils.hunt(report)
 		ofc_db['data'].update_one({'_id': 'data'}, {"$set": {'last_work_report': i['_id']}})

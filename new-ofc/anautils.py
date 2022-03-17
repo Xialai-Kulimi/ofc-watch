@@ -23,7 +23,8 @@ def anautils(db, _config_db):
 	data_collection.delete_many({})
 
 	data_collection.insert_one({'_id': 'leaderboard'})
-	data_collection.insert_one({'_id': 'events'})
+	data_collection.insert_one({'_id': 'hunt_events', 'data': []})
+	data_collection.insert_one({'_id': 'castle_events', 'data': []})
 	data_collection.insert_one({'_id': 'hunts'})
 	data_collection.insert_one({'_id': 'weapon_type_count', 'data': []})
 
@@ -72,7 +73,6 @@ def get_equipment_id(equipment):
 
 def check_or_create_equipment(equipment):
 	_id = get_equipment_id(equipment)
-	# {'name': '凌苳苳苳苳苳苳', 'quality': '傳說', 'type': '雙手劍', 'atk': 1517, 'def': 2963, 'minePower': 1096}
 	if (weapon_collection.find_one({'_id': _id}) == None):
 		equipment_base = {'_id': _id, 'count': 1, 'round': _round}
 		equipment_base['data'] = equipment
@@ -211,9 +211,36 @@ def report_equipments(report):
 	return equipment_list
 
 
+def report_summary(report):
+	if report_is_wall(report):
+		for m in messages(report)[::-1]:
+			if m.get('s') == 'critical' or m['m'].split(' ')[0] == f"{report_stat(report)['a']['name']}直接攻擊城堡，造成":
+				return m['m']
+
+	elif report_is_hunt():
+		if not (a_died(report) or b_died(report)):
+			for m in messages(report):
+				if m.get('s') == 'info':
+					return m['m']
+		else:
+			for m in messages(report)[::-1]:
+				if m.get('s') == 'critical':
+					return m['m']
+	else:
+		if a_died(report) or b_died(report):
+			for m in messages(report)[::-1]:
+				if m.get('s') == 'critical':
+					return m['m']
+		else:
+			for m in messages(report):
+				if m.get('s') == 'info':
+					return m['m']
+
+
 class Report():
 	def __init__(self, report):
 		self.report = report['report']
+		self.id = report['_id']
 		self.stat = report_stat(report)
 		self.messages = messages(report)
 		self.is_hunt = report_is_hunt(report)
@@ -230,13 +257,12 @@ class Report():
 		self.a = self.stat['a']
 		self.b = self.stat.get('b')
 		self.equipments = report_equipments(report)
+		self.summary = report_summary(report)
+		self.time = report['report']['time']
 
 
 
 def player(report):
-
-	# check_and_add_event(report)
-
 	aId = report.report['aId']
 	bId = report.report.get('bId')
 
@@ -290,6 +316,15 @@ def player(report):
 
 def match(report):
 	pass
+
+
+def events(report):
+	if report.is_hunt:
+		data_collection.update_one({'_id': 'hunt_events'}, {'$push': {'$each': [{'text': report.summary, 'time': report.time, 'link': f'/{_round}/history/{report.id}'}]}, '$position': 0})
+	else:
+		data_collection.update_one({'_id': 'castle_events'}, {'$push': {'$each': [{'text': report.summary, 'time': report.time, 'link': f'/{_round}/history/{report.id}'}]}, '$position': 0})
+
+
 
 
 def weapon(report):

@@ -144,7 +144,7 @@ export default {
       this.round = this.round_options[this.round_options.length - 1]
       await router.replace("/" + this.round)
     }
-    
+
     setInterval(() => {
       if (this.$route.params.round === 'undefined'){
         this.router.replace('/')

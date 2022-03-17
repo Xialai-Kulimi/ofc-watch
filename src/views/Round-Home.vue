@@ -42,7 +42,7 @@
             color="red"
             :to="item.link"
         >
-          {{item.text}}
+          {{(new Date(item.time)).toLocaleString()}} {{item.text}}
         </v-list-item>
       </template>
     </v-virtual-scroll>
