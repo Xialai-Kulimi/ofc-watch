@@ -252,7 +252,7 @@ export default {
   name: 'Home',
   data() {
     return {
-      loading: true,
+      loading: false,
       benched: 0,
       hunt_events: [
         {
