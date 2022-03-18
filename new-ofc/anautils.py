@@ -21,14 +21,13 @@ def anautils(db, _config_db):
 
 	_round = ofc_db.name.replace('ofc', '').replace('-', '.')
 
-	data_collection.delete_many({})
+	data_collection.delete_many({'$ne': {'_id': 'data'}})
 
 	data_collection.insert_one({'_id': 'leaderboard'})
 	data_collection.insert_one({'_id': 'hunt_events', 'data': []})
 	data_collection.insert_one({'_id': 'castle_events', 'data': []})
 	data_collection.insert_one({'_id': 'hunts'})
 	data_collection.insert_one({'_id': 'weapon_type_count', 'data': []})
-
 
 
 def test():
@@ -245,20 +244,79 @@ def report_loot(report):
 	for m in messages(report):
 		if '×' in m['m'] and m.get('s') == 'info':
 			loot_list.append({
-				'name': '×'.join(m['m'].split('×')[:-1]),
+				'type': '×'.join(m['m'].split('×')[:-1]),
 				'count': int(m['m'].split('×')[-1])
 				})
 	return loot_list
 
 
-def hunt_add_count(area, level):
-	pass
+def check_or_create_hunt_area(area):
+	if hunt_collection.find_one({'_id': area}) == None:
+		hunt_collection.insert_one({
+			'_id': area,
+			'data': 
+			{
+				'name': area,
+				'dialog': False,
+				'monster_list': [],
+				'level_list': []
+			}
+			})
+	return hunt_collection.find_one({'_id': area})['data']
 
-def monster_add_loot(area, monster_name, loot):
-	pass
 
-def level_monster_dist(area, level, monster_name):
-	pass
+def hunt_add_count(area, level, monster_name):
+	hunt_data = check_or_create_hunt_area(area)
+	for i in hunt_data['level_list']:
+		if i['level'] == level:
+			i['count'] += 1
+			for m in i['monster_list']:
+				if m['name'] == monster_name:
+					m['count'] += 1
+					break
+			else:
+				i['monster_list'].append({
+					'name': monster_name,
+					'count': 1
+					})
+			break
+	else:
+		hunt_data['level_list'].append({
+			'level': level,
+			'count': 1,
+			'monster_list': [
+			{
+				'name': monster_name,
+				'count': 1
+			}]
+			})
+	hunt_collection.update_one({'_id': area}, {'$set': {'data': hunt_data}})
+
+
+def monster_data_update(area, level, monster_name, monster_type, loot):
+	hunt_data = check_or_create_hunt_area(area)
+	for m in hunt_data['monster_list']:
+		if (m['name'], m['type']) == (monster_name, monster_type):
+			m['level'][1] = max(m['level'][1], level)
+			m['level'][0] = min(m['level'][0], level)
+			for l in loot:
+				for m_l in m['loot']:
+					if l['type'] == m_l['type']:
+						m_l['count'] += l['count']
+						break
+				else:
+					m['loot'].append(l)
+
+			break
+	else:
+		hunt_data['monster_list'].append({
+			'level': [level, level],
+			'name': monster_name,
+			'type': monster_type,
+			'loot': loot
+			})
+	hunt_collection.update_one({'_id': area}, {'$set': {'data': hunt_data}})
+	
 
 
 
@@ -347,9 +405,31 @@ def match(report):
 
 def events(report):
 	if report.is_hunt:
-		data_collection.update_one({'_id': 'hunt_events'}, {'$push': {'data': {'$each': [{'text': report.summary, 'time': report.time, 'link': f'/{_round}/history/{report.id}'}], '$position': 0}}})
+		data_collection.update_one(
+			{'_id': 'hunt_events'}, 
+			{'$push': 
+				{
+					'data': 
+						{
+							'$each': [{'text': report.summary, 'time': report.time, 'link': f'/{_round}/history/{report.id}'}], 
+							'$position': 0
+						}
+				}
+			}
+		)
 	else:
-		data_collection.update_one({'_id': 'castle_events'}, {'$push': {'data': {'$each': [{'text': report.summary, 'time': report.time, 'link': f'/{_round}/history/{report.id}'}, 'location': report.report['location']], '$position': 0}}})
+		data_collection.update_one(
+			{'_id': 'castle_events'}, 
+			{'$push': 
+				{'data': 
+					{
+						'$each': 
+							[{'text': report.summary, 'time': report.time, 'link': f'/{_round}/history/{report.id}', 'location': report.report['location']}], 
+						'$position': 0
+					}
+				}
+			}
+		)
 
 
 
@@ -368,9 +448,9 @@ def hunt(report):
 	area = ' '.join(report.location.split(' ')[:-1])
 	level = int(report.location.split(' ')[-1])
 
-	hunt_add_count(area, level)
-	monster_add_loot(area, report.b['name'], report.loot)
-	level_monster_dist(area, level, report.b['name'])
+	hunt_add_count(area, level, report.b['name'])
+	monster_data_update(area, level, report.b['name'], report.b['role'], report.loot)
+
 
 
 
@@ -387,6 +467,11 @@ def unify():
 		} for p in player_collection.find().sort([(board['field'], -1)])]
 		this_board['json'] = board_list
 		leaderboard.append(this_board)
-
 	data_collection.update_one({'_id': 'leaderboard'}, {"$set": {'data': leaderboard}})
+
+	hunts = []
+	for area in hunt_collection.find({}):
+		hunts.append(area['data'])
+	data_collection.update_one({'_id': 'hunts'}, {"$set": {'data': hunts}})
+
 
