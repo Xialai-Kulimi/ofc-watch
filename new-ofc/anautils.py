@@ -1,4 +1,5 @@
 import hashlib
+from pymongo import InsertOne, UpdateOne
 
 
 def sha256(text):
@@ -7,9 +8,8 @@ def sha256(text):
 	return h.hexdigest()
 
 
-
 def anautils(db, _config_db):
-	global ofc_db, config_db, data_collection, player_collection, match_collection, report_collection, weapon_collection, hunt_collection, _round
+	global ofc_db, config_db, data_collection, player_collection, match_collection, report_collection, weapon_collection, hunt_collection, _round, player_bulk_list
 	ofc_db = db
 	config_db = _config_db
 	data_collection = ofc_db['data']
@@ -21,13 +21,17 @@ def anautils(db, _config_db):
 
 	_round = ofc_db.name.replace('ofc', '').replace('-', '.')
 
-	data_collection.delete_many({'$ne': {'_id': 'data'}})
+	data_collection.delete_many({'_id': {'$ne': 'data'}})
 
 	data_collection.insert_one({'_id': 'leaderboard'})
 	data_collection.insert_one({'_id': 'hunt_events', 'data': []})
 	data_collection.insert_one({'_id': 'castle_events', 'data': []})
 	data_collection.insert_one({'_id': 'hunts'})
 	data_collection.insert_one({'_id': 'weapon_type_count', 'data': []})
+
+	player_bulk_list = []
+
+
 
 
 def test():
@@ -39,9 +43,9 @@ def get_player_db(_id):
 
 
 def check_or_create_player(_id):
-	if (player_collection.find_one({'_id': _id}) == None):
-		player_collection.insert_one(
-			{
+	check_player = player_collection.find_one({'_id': _id})
+	if (check_player == None):
+		new_player = {
 				'_id': _id,
 				'name': '',
 				'role': '',
@@ -64,12 +68,15 @@ def check_or_create_player(_id):
 				'hunts': [],
 				'report_summary': []
 			}
-		)
+		player_collection.insert_one(new_player)
+		return new_player
+	else:
+		return check_player
+
 
 def get_equipment_id(equipment):
 	return sha256(str(equipment))
 	
-
 
 def check_or_create_equipment(equipment):
 	_id = get_equipment_id(equipment)
@@ -92,20 +99,28 @@ def equipment_type_add(equipment):
 		for t in weapon_type_count:
 			if t['name'] == equipment['type']:
 				t['count'] += 1
+
+	weapon_type_count = sorted(weapon_type_count, key=lambda x:x['count'], reverse=True)
+		
+
 	data_collection.update_one({'_id': 'weapon_type_count'}, {"$set": {'data': weapon_type_count}})
 
 
 
 
-def player_stat_add(_id, field, amount):
-	check_or_create_player(_id)
-	player_collection.update_one({'_id': _id}, {"$inc": {field: amount}})
+def player_stat_add(player_dict, field, amount):
+	player_dict[field] += amount
+	return player_dict
+	# player_bulk_list.append(UpdateOne({'_id': _id}, {"$inc": {field: amount}}))
 
 
-def player_stat_set(_id, field, amount):
-	check_or_create_player(_id)
-	player_collection.update_one({'_id': _id}, {"$set": {field: amount}})
+def player_stat_set(player_dict, field, amount):
+	player_dict[field] = amount
+	return player_dict
+	# player_bulk_list.append(UpdateOne({'_id': _id}, {"$set": {field: amount}}))
 
+def player_stat_update(player_dict):
+	player_collection.replace_one({'_id': player_dict['_id']}, player_dict)
 
 def report_stat(report):
 	return report['report']['messages']['stats']
@@ -189,7 +204,7 @@ def a_died(report):
 		return a_take_damage(report) >= report_stat(report)['a']['hp']
 	else:
 		for m in messages(report):
-			if m['m'].split(' ')[0] == f"{report_stat(report)['a']['name']}被擊殺死亡了，{report_stat(report)['b']['name']}還有" and m['s'] == 'critical':
+			if (m['m'].split(' ')[0] == f"{report_stat(report)['a']['name']}被擊殺死亡了，{report_stat(report)['b']['name']}還有" or m['m'].split(' ')[0] == f"{report_stat(report)['a']['name']}被擊殺身亡了，{report_stat(report)['b']['name']}還有") and m['s'] == 'critical':
 				return True
 		return False
 
@@ -198,7 +213,7 @@ def b_died(report):
 	if report_is_wall(report):
 		return False
 	for m in messages(report):
-		if m['m'].split(' ')[0] == f"{report_stat(report)['b']['name']}被擊殺死亡了，{report_stat(report)['a']['name']}還有" and m['s'] == 'critical':
+		if (m['m'].split(' ')[0] == f"{report_stat(report)['b']['name']}被擊殺死亡了，{report_stat(report)['a']['name']}還有" or m['m'].split(' ')[0] == f"{report_stat(report)['b']['name']}被擊殺身亡了，{report_stat(report)['a']['name']}還有") and m['s'] == 'critical':
 			return True
 	return False
 
@@ -348,16 +363,20 @@ class Report():
 
 
 def player(report):
+
 	aId = report.report['aId']
 	bId = report.report.get('bId')
+	aId = check_or_create_player(aId)
+	if bId:
+		bId = check_or_create_player(bId)
 
 
-	player_stat_set(aId, 'name', report.a['name'])
-	player_stat_set(aId, 'role', report.a['role'])
+	aId = player_stat_set(aId, 'name', report.a['name'])
+	aId = player_stat_set(aId, 'role', report.a['role'])
 	if report.a.get('role2'):
-		player_stat_set(aId, 'role2', report.a['role2'])
-	player_stat_set(aId, 'faction', report.report['aFactionName'])
-	player_stat_set(aId, 'all_xp', report.a['fightExp'])
+		aId = player_stat_set(aId, 'role2', report.a['role2'])
+	aId = player_stat_set(aId, 'faction', report.report['aFactionName'])
+	aId = player_stat_set(aId, 'all_xp', report.a['fightExp'])
 
 
 	if report.is_hunt:
@@ -369,17 +388,17 @@ def player(report):
 			player_stat_add(aId, 'wall_damage', report.a_deal_damage)
 
 		else:
-			player_stat_set(bId, 'name', report.b['name'])
-			player_stat_set(bId, 'all_xp', report.b['fightExp'])
+			bId = player_stat_set(bId, 'name', report.b['name'])
+			bId = player_stat_set(bId, 'all_xp', report.b['fightExp'])
 
 			player_stat_add(aId, 'battle_xp', report.a_gain_xp)
 			player_stat_add(bId, 'battle_xp', report.b_gain_xp)
 			
-			player_stat_set(bId, 'role', report.b['role'])
+			bId = player_stat_set(bId, 'role', report.b['role'])
 			if report.b.get('role2'):
-				player_stat_set(bId, 'role2', report.b['role2'])
+				bId = player_stat_set(bId, 'role2', report.b['role2'])
 
-			player_stat_set(bId, 'faction', report.report['bFactionName'])
+			bId = player_stat_set(bId, 'faction', report.report['bFactionName'])
 
 			if report.a_died:
 				player_stat_add(aId, 'bekill', 1)
@@ -397,6 +416,10 @@ def player(report):
 
 			player_stat_add(aId, 'battle_count', 1)
 			player_stat_add(bId, 'battle_count', 1)
+
+	player_stat_update(aId)
+	if bId:
+		player_stat_update(bId)
 
 
 def match(report):
@@ -452,8 +475,6 @@ def hunt(report):
 	monster_data_update(area, level, report.b['name'], report.b['role'], report.loot)
 
 
-
-
 def unify():
 	leaderboard = []
 	for board in config_db.data.find_one({'_id': 'config'})['leaderboard']:
@@ -471,6 +492,12 @@ def unify():
 
 	hunts = []
 	for area in hunt_collection.find({}):
+
+		for i in area['data']['level_list']:
+			all_count = sum([m['count'] for m in i['monster_list']])
+			for m in i['monster_list']:
+				m['percent'] = f"{m['count']*100/(all_count):2.1f}%"
+
 		hunts.append(area['data'])
 	data_collection.update_one({'_id': 'hunts'}, {"$set": {'data': hunts}})
 
