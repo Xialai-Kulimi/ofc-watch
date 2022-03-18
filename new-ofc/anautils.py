@@ -503,7 +503,9 @@ def unify():
 
 	hunt_events = data_collection.find_one({'_id': 'hunt_events'})
 	castle_events = data_collection.find_one({'_id': 'castle_events'})
-	data_collection.replace_one({'_id': 'hunt_events'}, hunt_events[:100])
-	data_collection.replace_one({'_id': 'castle_events'}, castle_events[:100])
+	hunt_events['data'] = hunt_events['data'][:100]
+	castle_events['data'] = castle_events['data'][:100]
+	data_collection.replace_one({'_id': 'hunt_events'}, hunt_events)
+	data_collection.replace_one({'_id': 'castle_events'}, castle_events)
 
 
