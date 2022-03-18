@@ -99,39 +99,76 @@
           </v-btn>
         </template>
 
-        <v-card>
+        <v-card class="pa-5">
           <v-container>
             <v-card-title>
               {{hunt.name}}
             </v-card-title>
-            <v-menu
-
-                close-on-click
-            >
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                    plain
-                    v-bind="attrs"
-                    v-on="on"
-                >
-                  點擊查看此地區的掉落物
-                </v-btn>
-              </template>
-
-              <v-list
-                  width="500"
-              >
-                <v-list-item
-                    v-for="i in hunt.loot"
-                    :key="i"
-                >
-                  <v-list-item-title>{{ i.name }}</v-list-item-title>
-                  <v-list-item>{{i.count}}</v-list-item>
-                </v-list-item>
-              </v-list>
-            </v-menu>
           </v-container>
 
+          <v-simple-table
+              fixed-header
+              height="300px"
+          >
+
+            <template v-slot:default>
+              <thead>
+              <tr>
+                <th class="text-left">
+                  出現層數
+                </th>
+                <th class="text-left">
+                  名稱
+                </th>
+                <th class="text-left">
+                  種類
+                </th>
+                <th class="text-left">
+                  掉落物
+                </th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr
+                  v-for="item in hunt.monster_list"
+                  :key="item"
+
+              >
+                <td>{{ item.level[0] }} ~ {{ item.level[1] }}</td>
+                <td>{{ item.name }}</td>
+                <td>{{ item.type }}</td>
+                <td>
+                  <v-menu
+
+                      close-on-click
+                  >
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn
+                          plain
+                          v-bind="attrs"
+                          v-on="on"
+                      >
+                        點擊查看
+                      </v-btn>
+                    </template>
+
+                    <v-list
+                        width="500"
+                    >
+                      <v-list-item
+                          v-for="i in item.loot"
+                          :key="i"
+                      >
+                        <v-list-item-title>{{ i.type }}</v-list-item-title>
+                        <v-list-item>{{i.count}}</v-list-item>
+                      </v-list-item>
+                    </v-list>
+                  </v-menu>
+                </td>
+              </tr>
+              </tbody>
+            </template>
+          </v-simple-table>
 
           <v-simple-table
               fixed-header
@@ -144,7 +181,7 @@
                   層數
                 </th>
                 <th class="text-left">
-                  次數
+                  總狩獵次數次數
                 </th>
                 <th class="text-left">
                   怪物組成
@@ -153,7 +190,7 @@
               </thead>
               <tbody>
               <tr
-                  v-for="item in hunt.dist"
+                  v-for="item in hunt.level_list"
                   :key="item"
 
               >
@@ -178,11 +215,12 @@
                         width="500"
                     >
                       <v-list-item
-                          v-for="i in item.monster"
+                          v-for="i in item.monster_list"
                           :key="i"
                       >
-                        <v-list-item-title>{{ i.type }}</v-list-item-title>
+                        <v-list-item-title>{{ i.name }}</v-list-item-title>
                         <v-list-item>{{i.count}}</v-list-item>
+                        <v-list-item>{{i.percent}}</v-list-item>
                       </v-list-item>
                     </v-list>
                   </v-menu>
@@ -487,16 +525,6 @@ export default {
         {
           name: "vul3蝙蝠動",
           dialog: false,
-          loot: [
-            {
-              name: "依",
-              count: 67
-            },
-            {
-              name: "斷入",
-              count: 67
-            },
-          ],
           dist: [
             {
               level: 1,
@@ -504,7 +532,8 @@ export default {
               monster: [
                 {
                   type: "wolf",
-                  count: 678
+                  count: 678,
+                  percent: '69%'
                 },
                 {
                   type: "rabbot",
