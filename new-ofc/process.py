@@ -31,8 +31,8 @@ while True:
 	last_work_report = ofc_data['last_work_report']
 	report_list = report_collection.find({'_id': {'$gt': last_work_report}}, limit=1000).sort('_id')
 	for i in report_list:
-
-		print(i)
+		if i['_id'] % 100 == 0:
+			print(i['_id'])
 		report = anautils.Report(i)
 		anautils.player(report)
 		anautils.match(report)
