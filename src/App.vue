@@ -7,7 +7,6 @@
         left
 
         direction="bottom"
-        open-on-hover
         transition="slide-y-transition"
     >
       <template v-slot:activator>
