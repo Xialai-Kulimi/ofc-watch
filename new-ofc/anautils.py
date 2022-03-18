@@ -9,7 +9,7 @@ def sha256(text):
 
 
 def anautils(db, _config_db):
-	global ofc_db, config_db, data_collection, player_collection, match_collection, report_collection, weapon_collection, _round
+	global ofc_db, config_db, data_collection, player_collection, match_collection, report_collection, weapon_collection, hunt_collection, _round
 	ofc_db = db
 	config_db = _config_db
 	data_collection = ofc_db['data']
@@ -17,6 +17,7 @@ def anautils(db, _config_db):
 	match_collection = ofc_db['match']
 	report_collection = ofc_db['report']
 	weapon_collection = ofc_db['weapon']
+	hunt_collection = ofc_db['hunt']
 
 	_round = ofc_db.name.replace('ofc', '').replace('-', '.')
 
@@ -236,10 +237,29 @@ def report_summary(report):
 				if m.get('s') == 'info':
 					return m['m']
 
+
 def report_loot(report):
 	if not report_is_hunt(report):
 		return []
-	for m in messages(report)
+	loot_list = []
+	for m in messages(report):
+		if '×' in m['m'] and m.get('s') == 'info':
+			loot_list.append({
+				'name': '×'.join(m['m'].split('×')[:-1]),
+				'count': int(m['m'].split('×')[-1])
+				})
+	return loot_list
+
+
+def hunt_add_count(area, level):
+	pass
+
+def monster_add_loot(area, monster_name, loot):
+	pass
+
+def level_monster_dist(area, level, monster_name):
+	pass
+
 
 
 class Report():
@@ -350,7 +370,7 @@ def hunt(report):
 
 	hunt_add_count(area, level)
 	monster_add_loot(area, report.b['name'], report.loot)
-
+	level_monster_dist(area, level, report.b['name'])
 
 
 
