@@ -18,9 +18,9 @@ def str_is_safe(strs):
     return True
 
 
-@app.route('/api/<_round>')
-@app.route('/api/<_round>/<param>')
-@app.route('/api/<_round>/<param>/<_id>')
+@app.route('//<_round>')
+@app.route('//<_round>/<param>')
+@app.route('//<_round>/<param>/<_id>')
 def api(_round, param = 'none', _id = '-1'):
     if not (str_is_safe(_round) and str_is_safe(param) and str_is_safe(_id)):
         return flask.Response(json.dumps({'text': 'Unsafe string detected.'}), mimetype='application/json')
