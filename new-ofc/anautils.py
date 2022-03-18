@@ -165,12 +165,12 @@ def b_gain_xp(report):
 def a_deal_damage(report):
 	if report_is_wall(report):
 		for m in messages(report):
-			if m['m'].split(' ')[0] == f"{report_stat(report)['a']['name']}直接攻擊城堡，造成":
+			if ' '.join(m['m'].split(' ')[:-2]) == f"{report_stat(report)['a']['name']}直接攻擊城堡，造成":
 				return int(m['m'].split(' ')[-2])
-	else:
+	elif not report_is_hunt(report):
 		damage = 0
 		for m in messages(report):
-			if m['m'].endswith('點傷害') and m['m'].split(' ')[-3].endswith(f"對{report_stat(report)['b']['name']}造成"):
+			if m['m'].endswith('點傷害') and ' '.join(m['m'].split(' ')[:-2]).endswith(f"對{report_stat(report)['b']['name']}造成"):
 				damage += int(m['m'].split(' ')[-2])
 		return damage
 	return 0
@@ -189,7 +189,7 @@ def b_deal_damage(report):
 def a_take_damage(report):
 	if report_is_wall(report):
 		for m in messages(report):
-			if m['m'].split(' ')[0] == f"{report_stat(report)['a']['name']}在攻城過程中消耗了":
+			if ' '.join(m['m'].split(' ')[:-2]) == f"{report_stat(report)['a']['name']}在攻城過程中消耗了":
 				return int(m['m'].split(' ')[-2])
 	else:
 		return b_deal_damage(report)
@@ -204,7 +204,7 @@ def a_died(report):
 		return a_take_damage(report) >= report_stat(report)['a']['hp']
 	else:
 		for m in messages(report):
-			if (m['m'].split(' ')[0] == f"{report_stat(report)['a']['name']}被擊殺死亡了，{report_stat(report)['b']['name']}還有" or m['m'].split(' ')[0] == f"{report_stat(report)['a']['name']}被擊殺身亡了，{report_stat(report)['b']['name']}還有") and m['s'] == 'critical':
+			if (' '.join(m['m'].split(' ')[:-2]) == f"{report_stat(report)['a']['name']}被擊殺死亡了，{report_stat(report)['b']['name']}還有" or ' '.join(m['m'].split(' ')[:-2]) == f"{report_stat(report)['a']['name']}被擊殺身亡了，{report_stat(report)['b']['name']}還有") and m['s'] == 'critical':
 				return True
 		return False
 
@@ -213,7 +213,7 @@ def b_died(report):
 	if report_is_wall(report):
 		return False
 	for m in messages(report):
-		if (m['m'].split(' ')[0] == f"{report_stat(report)['b']['name']}被擊殺死亡了，{report_stat(report)['a']['name']}還有" or m['m'].split(' ')[0] == f"{report_stat(report)['b']['name']}被擊殺身亡了，{report_stat(report)['a']['name']}還有") and m['s'] == 'critical':
+		if (' '.join(m['m'].split(' ')[:-2]) == f"{report_stat(report)['b']['name']}被擊殺死亡了，{report_stat(report)['a']['name']}還有" or ' '.join(m['m'].split(' ')[:-2]) == f"{report_stat(report)['b']['name']}被擊殺身亡了，{report_stat(report)['a']['name']}還有") and m['s'] == 'critical':
 			return True
 	return False
 
@@ -229,7 +229,7 @@ def report_equipments(report):
 def report_summary(report):
 	if report_is_wall(report):
 		for m in messages(report)[::-1]:
-			if m.get('s') == 'critical' or m['m'].split(' ')[0] == f"{report_stat(report)['a']['name']}直接攻擊城堡，造成":
+			if m.get('s') == 'critical' or ' '.join(m['m'].split(' ')[:-2]) == f"{report_stat(report)['a']['name']}直接攻擊城堡，造成":
 				return m['m']
 
 	elif report_is_hunt(report):
@@ -500,5 +500,10 @@ def unify():
 
 		hunts.append(area['data'])
 	data_collection.update_one({'_id': 'hunts'}, {"$set": {'data': hunts}})
+
+	hunt_events = data_collection.find_one({'_id': 'hunt_events'})
+	castle_events = data_collection.find_one({'_id': 'castle_events'})
+	data_collection.replace_one({'_id': 'hunt_events'}, hunt_events[:100])
+	data_collection.replace_one({'_id': 'castle_events'}, castle_events[:100])
 
 
