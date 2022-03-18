@@ -181,7 +181,7 @@ def b_deal_damage(report):
 		return 0
 	damage = 0
 	for m in messages(report):
-		if m['m'].endswith('點傷害') and m['m'].split(' ')[-3].endswith(f"對{report_stat(report)['a']['name']}造成"):
+		if m['m'].endswith('點傷害') and ' '.join(m['m'].split(' ')[:-2]).endswith(f"對{report_stat(report)['a']['name']}造成"):
 			damage += int(m['m'].split(' ')[-2])
 	return damage
 
