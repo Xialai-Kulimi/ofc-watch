@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-card v-if="loading">
+    <v-card v-if="loading" width="800">
       <v-tabs
           v-model="tab"
           grow
@@ -53,7 +53,7 @@
     </v-card>
     <v-skeleton-loader
         v-if="!loading"
-        style="width: 100%"
+        width="800"
         type="card-avatar, article, actions"
     ></v-skeleton-loader>
   </v-container>

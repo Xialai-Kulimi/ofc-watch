@@ -2,10 +2,10 @@
   <v-container>
     <v-skeleton-loader
         v-if="!loading"
-        style="width: 100%"
+        width="800"
         type="card-avatar, article, actions"
     ></v-skeleton-loader>
-    <v-card v-if="loading">
+    <v-card v-if="loading" width="800">
 
       <v-container>
         <v-card-title>{{ player.name }}的個人資料</v-card-title>

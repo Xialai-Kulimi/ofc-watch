@@ -8,7 +8,8 @@
     >
 
       <v-card
-          style="width: 100%;display: flex"
+          width="800"
+          style="display: flex"
           v-if="loading"
           class="pa-10 ma-5 justify-center align-center flex-column"
       >
@@ -272,7 +273,7 @@
       </v-card>
       <v-skeleton-loader
           v-if="!loading"
-          style="width: 100%"
+          width="800"
           type="card-avatar, article, actions"
       ></v-skeleton-loader>
     </v-container>

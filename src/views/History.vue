@@ -1,7 +1,7 @@
 <template>
   <v-container
   >
-    <v-card v-if="loading" class="pa-5">
+    <v-card v-if="loading" class="pa-5" width="800">
       <v-card-title>戰報</v-card-title>
       <v-card-subtitle>還原歷史經過</v-card-subtitle>
       <v-card-text>在：<strong>{{report.report.location}}</strong></v-card-text>
@@ -71,7 +71,7 @@
           </table>
         </v-container>
     </v-card>
-    <v-card v-if="!loading"><p>正在載入戰報</p></v-card>
+    <v-card v-if="!loading" width="800"><p>正在載入戰報</p></v-card>
   </v-container>
 
 </template>

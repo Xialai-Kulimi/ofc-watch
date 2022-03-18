@@ -36,17 +36,37 @@
       >
         <v-icon>mdi-eye-settings</v-icon>
       </v-btn>
-              <v-btn
-                  fab
-                  v-for="link in links"
-                  :key="link"
-                  small
-                  @click="goto_page(link.path)"
-                  color="gray"
-              >
-                <v-icon>{{ link.icon }}</v-icon>
+      <v-btn
+          fab
+          small
+          @click="goto_page('player')"
+          color="gray"
+      >
+        <v-icon>mdi-account-eye</v-icon>
 
-              </v-btn>
+      </v-btn>
+
+      <v-btn
+          fab
+          small
+          @click="goto_page('search')"
+          color="gray"
+      >
+
+          <v-icon>mdi-magnify</v-icon>
+
+      </v-btn>
+
+      <v-btn
+          fab
+
+          small
+          @click="goto_page('about')"
+          color="gray"
+      >
+        <v-icon>mdi-file-eye-outline</v-icon>
+
+      </v-btn>
 
     </v-speed-dial>
     <v-dialog
