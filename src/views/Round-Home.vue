@@ -50,7 +50,7 @@
             <v-skeleton-loader
                 v-if="!hunt_events_loading"
 
-                type="card-avatar, article, actions"
+                type="article"
             ></v-skeleton-loader>
           </v-container>
 
@@ -82,7 +82,7 @@
             <v-skeleton-loader
                 v-if="!castle_events_loading"
 
-                type="card-avatar, article, actions"
+                type="article"
             ></v-skeleton-loader>
           </v-container>
 
@@ -254,7 +254,7 @@
             <v-skeleton-loader
                 v-if="!hunts_loading"
 
-                type="card-avatar, article, actions"
+                type="article"
             ></v-skeleton-loader>
           </v-container>
 
@@ -293,7 +293,7 @@
             </v-simple-table>
             <v-skeleton-loader
                 v-if="!weapon_type_count_loading"
-                type="card-avatar, article, actions"
+                type="article"
             ></v-skeleton-loader>
           </v-container>
         </v-container>
@@ -301,7 +301,7 @@
       <v-skeleton-loader
           v-if="!loading"
           width="800"
-          type="card-avatar, article, actions"
+          type="article"
       ></v-skeleton-loader>
     </v-container>
 
