@@ -39,6 +39,15 @@
       <v-btn
           fab
           small
+          @click="goto_page('')"
+          color="gray"
+      >
+        <v-icon>mdi-monitor-eye</v-icon>
+
+      </v-btn>
+      <v-btn
+          fab
+          small
           @click="goto_page('player')"
           color="gray"
       >
