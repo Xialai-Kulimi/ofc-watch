@@ -10,10 +10,10 @@
       <v-card-title>關於作者</v-card-title>
       <v-card-subtitle>自我介紹</v-card-subtitle>
       <v-card-text>暱稱為Kulimi，自詡遊戲中的賺錢大師，興趣為提醒其他玩家尿尿，雖然沒有很閒但還是抽空做出第二版。</v-card-text>
-    </v-card>
-    <v-card class="ma-5"
+<!--    </v-card>-->
+<!--    <v-card class="ma-5"-->
 
-    >
+<!--    >-->
       <v-card-title>關於網站</v-card-title>
       <v-card-subtitle>網站介紹</v-card-subtitle>
       <v-card-text>
