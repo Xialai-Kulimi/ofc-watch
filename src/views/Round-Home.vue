@@ -4,7 +4,6 @@
         fluid
         row
         class="align-center justify-center"
-
     >
 
       <v-card
@@ -316,7 +315,7 @@
 import api from "@/api";
 
 export default {
-  name: 'Home',
+  name: 'Round-Home',
   data() {
     return {
       loading: true,
