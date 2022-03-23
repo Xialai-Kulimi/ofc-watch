@@ -167,6 +167,7 @@ def a_deal_damage(report):
 		for m in messages(report):
 			if ' '.join(m['m'].split(' ')[:-2]) == f"{report_stat(report)['a']['name']}直接攻擊城堡，造成":
 				return int(m['m'].split(' ')[-2])
+		return 0
 	elif not report_is_hunt(report):
 		damage = 0
 		for m in messages(report):
@@ -187,10 +188,15 @@ def b_deal_damage(report):
 
 
 def a_take_damage(report):
+	print(report['_id'])
 	if report_is_wall(report):
 		for m in messages(report):
 			if ' '.join(m['m'].split(' ')[:-2]) == f"{report_stat(report)['a']['name']}在攻城過程中消耗了":
 				return int(m['m'].split(' ')[-2])
+			elif m['m'] == f"{report_stat(report)['a']['name']}因缺氧倒下了":
+				return report_stat(report)['a']['hp']
+		print('Unknown error', report)
+		raise TypeError
 	else:
 		return b_deal_damage(report)
 
