@@ -261,7 +261,7 @@ export default {
       localStorage.round = this.round
       router.replace('/')
       router.replace("/" + this.round)
-
+      this.round_dialog = false
     },
   },
   mounted: async function () {

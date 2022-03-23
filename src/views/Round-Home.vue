@@ -30,6 +30,7 @@
           >
             <v-card-title>最新狩獵戰報</v-card-title>
             <v-virtual-scroll
+                v-if="hunt_events_loading"
                 :bench="5"
                 :items="hunt_events"
                 height="400"
@@ -47,6 +48,11 @@
                 </v-list-item>
               </template>
             </v-virtual-scroll>
+            <v-skeleton-loader
+                v-if="!hunt_events_loading"
+
+                type="card-avatar, article, actions"
+            ></v-skeleton-loader>
           </v-container>
 
           <v-container
@@ -56,6 +62,7 @@
           >
             <v-card-title>最新攻城戰報</v-card-title>
             <v-virtual-scroll
+                v-if="castle_events_loading"
                 :bench="5"
                 :items="castle_events"
                 height="400"
@@ -73,168 +80,183 @@
                 </v-list-item>
               </template>
             </v-virtual-scroll>
+            <v-skeleton-loader
+                v-if="!castle_events_loading"
+
+                type="card-avatar, article, actions"
+            ></v-skeleton-loader>
           </v-container>
 
           <v-container
               class="ma-5"
           >
             <v-card-title>狩獵</v-card-title>
-
             <v-container
-                v-for="hunt in hunts"
-                :key="hunt"
-                style="display: flex"
-
+                v-if="hunts_loading"
             >
-              <v-dialog
-                  :v-model="hunt.dialog"
-                  width="500"
+              <v-container
+
+                  v-for="hunt in hunts"
+                  :key="hunt"
+                  style="display: flex"
+
               >
-                <template v-slot:activator="{ on, attrs }">
-                  <v-btn
-                      plain
-                      v-bind="attrs"
-                      v-on="on"
-                  >
-                    {{ hunt.name }}
-                  </v-btn>
-                </template>
-
-                <v-card class="pa-5">
-                  <v-container>
-                    <v-card-title>
+                <v-dialog
+                    :v-model="hunt.dialog"
+                    width="500"
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn
+                        plain
+                        v-bind="attrs"
+                        v-on="on"
+                    >
                       {{ hunt.name }}
-                    </v-card-title>
-                  </v-container>
+                    </v-btn>
+                  </template>
 
-                  <v-simple-table
-                      fixed-header
-                      height="300px"
-                  >
+                  <v-card class="pa-5">
+                    <v-container>
+                      <v-card-title>
+                        {{ hunt.name }}
+                      </v-card-title>
+                    </v-container>
 
-                    <template v-slot:default>
-                      <thead>
-                      <tr>
-                        <th class="text-left">
-                          出現層數
-                        </th>
-                        <th class="text-left">
-                          名稱
-                        </th>
-                        <th class="text-left">
-                          種類
-                        </th>
-                        <th class="text-left">
-                          掉落物
-                        </th>
-                      </tr>
-                      </thead>
-                      <tbody>
-                      <tr
-                          v-for="item in hunt.monster_list"
-                          :key="item"
+                    <v-simple-table
+                        fixed-header
+                        height="300px"
+                    >
 
-                      >
-                        <td>{{ item.level[0] }} ~ {{ item.level[1] }}</td>
-                        <td>{{ item.name }}</td>
-                        <td>{{ item.type }}</td>
-                        <td>
-                          <v-menu
+                      <template v-slot:default>
+                        <thead>
+                        <tr>
+                          <th class="text-left">
+                            出現層數
+                          </th>
+                          <th class="text-left">
+                            名稱
+                          </th>
+                          <th class="text-left">
+                            種類
+                          </th>
+                          <th class="text-left">
+                            掉落物
+                          </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr
+                            v-for="item in hunt.monster_list"
+                            :key="item"
 
-                              close-on-click
-                          >
-                            <template v-slot:activator="{ on, attrs }">
-                              <v-btn
-                                  plain
-                                  v-bind="attrs"
-                                  v-on="on"
-                              >
-                                點擊查看
-                              </v-btn>
-                            </template>
+                        >
+                          <td>{{ item.level[0] }} ~ {{ item.level[1] }}</td>
+                          <td>{{ item.name }}</td>
+                          <td>{{ item.type }}</td>
+                          <td>
+                            <v-menu
 
-                            <v-list
-                                width="500"
+                                close-on-click
                             >
-                              <v-list-item
-                                  v-for="i in item.loot"
-                                  :key="i"
+                              <template v-slot:activator="{ on, attrs }">
+                                <v-btn
+                                    plain
+                                    v-bind="attrs"
+                                    v-on="on"
+                                >
+                                  點擊查看
+                                </v-btn>
+                              </template>
+
+                              <v-list
+                                  width="500"
                               >
-                                <v-list-item-title>{{ i.type }}</v-list-item-title>
-                                <v-list-item>{{ i.count }}</v-list-item>
-                              </v-list-item>
-                            </v-list>
-                          </v-menu>
-                        </td>
-                      </tr>
-                      </tbody>
-                    </template>
-                  </v-simple-table>
+                                <v-list-item
+                                    v-for="i in item.loot"
+                                    :key="i"
+                                >
+                                  <v-list-item-title>{{ i.type }}</v-list-item-title>
+                                  <v-list-item>{{ i.count }}</v-list-item>
+                                </v-list-item>
+                              </v-list>
+                            </v-menu>
+                          </td>
+                        </tr>
+                        </tbody>
+                      </template>
+                    </v-simple-table>
 
-                  <v-simple-table
-                      fixed-header
-                      height="300px"
-                  >
-                    <template v-slot:default>
-                      <thead>
-                      <tr>
-                        <th class="text-left">
-                          層數
-                        </th>
-                        <th class="text-left">
-                          總狩獵次數
-                        </th>
-                        <th class="text-left">
-                          怪物組成
-                        </th>
-                      </tr>
-                      </thead>
-                      <tbody>
-                      <tr
-                          v-for="item in hunt.level_list"
-                          :key="item"
+                    <v-simple-table
+                        fixed-header
+                        height="300px"
+                    >
+                      <template v-slot:default>
+                        <thead>
+                        <tr>
+                          <th class="text-left">
+                            層數
+                          </th>
+                          <th class="text-left">
+                            總狩獵次數
+                          </th>
+                          <th class="text-left">
+                            怪物組成
+                          </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr
+                            v-for="item in hunt.level_list"
+                            :key="item"
 
-                      >
-                        <td>{{ item.level }}</td>
-                        <td>{{ item.count }}</td>
-                        <td>
-                          <v-menu
+                        >
+                          <td>{{ item.level }}</td>
+                          <td>{{ item.count }}</td>
+                          <td>
+                            <v-menu
 
-                              close-on-click
-                          >
-                            <template v-slot:activator="{ on, attrs }">
-                              <v-btn
-                                  plain
-                                  v-bind="attrs"
-                                  v-on="on"
-                              >
-                                點擊查看
-                              </v-btn>
-                            </template>
-
-                            <v-list
-                                width="500"
+                                close-on-click
                             >
-                              <v-list-item
-                                  v-for="i in item.monster_list"
-                                  :key="i"
+                              <template v-slot:activator="{ on, attrs }">
+                                <v-btn
+                                    plain
+                                    v-bind="attrs"
+                                    v-on="on"
+                                >
+                                  點擊查看
+                                </v-btn>
+                              </template>
+
+                              <v-list
+                                  width="500"
                               >
-                                <v-list-item-title>{{ i.name }}</v-list-item-title>
-                                <v-list-item>{{ i.count }}</v-list-item>
-                                <v-list-item>{{ i.percent }}</v-list-item>
-                              </v-list-item>
-                            </v-list>
-                          </v-menu>
-                        </td>
-                      </tr>
-                      </tbody>
-                    </template>
-                  </v-simple-table>
+                                <v-list-item
+                                    v-for="i in item.monster_list"
+                                    :key="i"
+                                >
+                                  <v-list-item-title>{{ i.name }}</v-list-item-title>
+                                  <v-list-item>{{ i.count }}</v-list-item>
+                                  <v-list-item>{{ i.percent }}</v-list-item>
+                                </v-list-item>
+                              </v-list>
+                            </v-menu>
+                          </td>
+                        </tr>
+                        </tbody>
+                      </template>
+                    </v-simple-table>
 
-                </v-card>
-              </v-dialog>
+                  </v-card>
+                </v-dialog>
 
+              </v-container>
             </v-container>
+
+            <v-skeleton-loader
+                v-if="!hunts_loading"
+
+                type="card-avatar, article, actions"
+            ></v-skeleton-loader>
           </v-container>
 
 
@@ -244,7 +266,9 @@
 
           >
             <v-card-title>裝備種類統計</v-card-title>
-            <v-simple-table>
+            <v-simple-table
+                v-if="weapon_type_count_loading"
+            >
               <template v-slot:default>
                 <thead>
                 <tr>
@@ -268,6 +292,10 @@
                 </tbody>
               </template>
             </v-simple-table>
+            <v-skeleton-loader
+                v-if="!weapon_type_count_loading"
+                type="card-avatar, article, actions"
+            ></v-skeleton-loader>
           </v-container>
         </v-container>
       </v-card>
@@ -291,7 +319,7 @@ export default {
   name: 'Home',
   data() {
     return {
-      loading: false,
+      loading: true,
       benched: 0,
       hunt_events: [
         {
@@ -664,15 +692,22 @@ export default {
         {name: "單手劍", count: 69696969},
         {name: "單手劍", count: 69696969},
         {name: "單手劍", count: 69696969},
-      ]
+      ],
+      hunt_events_loading: false,
+      castle_events_loading: false,
+      hunts_loading: false,
+      weapon_type_count_loading: false,
     }
   },
   mounted: async function () {
     this.hunt_events = await api.getData(this.$route.params.round + "/hunt_events")
+    this.hunt_events_loading = true
     this.castle_events = await api.getData(this.$route.params.round + "/castle_events")
+    this.castle_events_loading = true
     this.hunts = await api.getData(this.$route.params.round + "/hunts")
+    this.hunts_loading = true
     this.weapon_type_count = await api.getData(this.$route.params.round + "/weapon_type_count")
-    this.loading = true
+    this.weapon_type_count_loading = true
 
   },
   components: {}
