@@ -1,7 +1,5 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Round_Home from '../views/Round-Home.vue'
-import Home from '../views/Home.vue'
 
 Vue.use(VueRouter)
 
@@ -14,7 +12,7 @@ const routes = [
   {
     path: '/',
     name: 'Home',
-    component: Home
+    component: () => import('../views/Home.vue')
   },
   {
     path: '/about',
@@ -34,7 +32,7 @@ const routes = [
   {
     path: '/:round',
     name: 'round_home',
-    component: Round_Home
+    component: () => import('../views/Round-Home')
   },
   {
     path: '/:round/player',
@@ -61,7 +59,11 @@ const routes = [
     name: 'Player',
     component: () => import('../views/Player.vue')
   },
-
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'Not-Found',
+    component: () => import('../views/Not-Found.vue')
+  },
 
 ]
 
