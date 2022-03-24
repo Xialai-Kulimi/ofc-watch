@@ -76,7 +76,7 @@
 </template>
 <script>
 
-import router from "../router";
+import router from "../plugins/router";
 import api from "@/api";
 
 export default {
