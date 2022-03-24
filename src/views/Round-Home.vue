@@ -13,10 +13,10 @@
           class="pa-10 ma-5 justify-center align-center flex-column"
       >
 
-        <img alt="Vue logo" src="../assets/big-eye.png" class="eye">
-        <h1>Our Floating Castle Watcher</h1>
-        <h1>我們的浮游城 觀察者</h1>
-        <v-divider></v-divider>
+<!--        <Big_Eye></Big_Eye>-->
+<!--        <h1>Our Floating Castle Watcher</h1>-->
+<!--        <h1>我們的浮游城 觀察者</h1>-->
+<!--        <v-divider></v-divider>-->
         <v-container
             fluid
             row
@@ -316,10 +316,9 @@
 </template>
 
 <script>
-// @ is an alias to /src
-
-
 import api from "@/api";
+// import Big_Eye from "@/components/Big-Eye"
+
 
 export default {
   name: 'Round-Home',
@@ -585,48 +584,9 @@ export default {
     this.weapon_type_count_loading = true
 
   },
-  components: {}
+  components: {
+    // Big_Eye
+  }
 }
 </script>
 
-<style scoped lang="scss">
-
-@keyframes eye-open {
-  0% {
-    transform: matrix(1, 0, 0, 0, 0, 0);
-  }
-  50% {
-    transform: matrix(1, 0, 0, 0.0001, 0, 0);
-  }
-  60% {
-    transform: matrix(1, 0, 0, 0.3, 0, 0);
-  }
-  70% {
-    transform: matrix(1, 0, 0, 0.3, 0, 0);
-  }
-  80% {
-    transform: matrix(1.01, 0, 0, 0.01, 0, 0);
-  }
-
-  100% {
-    transform: matrix(1, 0, 0, 1, 0, 0);
-  }
-}
-
-.eye {
-  width: 500px;
-  height: 500px;
-  animation-name: eye-open;
-  animation-duration: 2.5s;
-
-}
-
-.eye2 {
-  width: 500px;
-  height: 500px;
-  //animation-name: eye-open;
-  //animation-duration: 2.5s;
-
-}
-
-</style>
