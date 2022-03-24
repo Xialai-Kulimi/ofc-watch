@@ -1,224 +1,170 @@
 <template>
   <v-app id="inspire">
-    <v-speed-dial
-        v-model="fab"
-        fixed
-        top
-        left
-
-        direction="bottom"
-        transition="slide-y-transition"
+    <v-container
+        style="display: flex;flex-flow: column"
+        row
+        fluid
+        class="align-center justify-center text-center"
     >
-      <template v-slot:activator>
+      <Login v-if="!login"></Login>
+      <p></p>
+    </v-container>
+    <v-container v-if="login"
+    >
+      <v-speed-dial
+          v-model="fab"
+          fixed
+          top
+          left
+
+          direction="bottom"
+          transition="slide-y-transition"
+      >
+        <template v-slot:activator>
+
+          <v-btn
+              v-model="fab"
+              color="black"
+              dark
+              fab
+          >
+            <v-icon v-if="fab">
+              mdi-close
+            </v-icon>
+            <v-icon v-else>
+              mdi-eye
+            </v-icon>
+          </v-btn>
+
+        </template>
 
         <v-btn
-            v-model="fab"
-            color="black"
-            dark
             fab
+            dark
+            small
+            color="gray"
+            @click="round_dialog=true"
         >
-          <v-icon v-if="fab">
-            mdi-close
-          </v-icon>
-          <v-icon v-else>
-            mdi-eye
-          </v-icon>
+          <v-icon>mdi-eye-settings</v-icon>
+        </v-btn>
+        <v-btn
+            fab
+            small
+            @click="goto_page('')"
+            color="gray"
+        >
+          <v-icon>mdi-monitor-eye</v-icon>
+
+        </v-btn>
+        <v-btn
+            fab
+            small
+            @click="goto_page('player')"
+            color="gray"
+        >
+          <v-icon>mdi-account-eye</v-icon>
+
         </v-btn>
 
-      </template>
-
-      <v-btn
-          fab
-          dark
-          small
-          color="gray"
-          @click="round_dialog=true"
-      >
-        <v-icon>mdi-eye-settings</v-icon>
-      </v-btn>
-      <v-btn
-          fab
-          small
-          @click="goto_page('')"
-          color="gray"
-      >
-        <v-icon>mdi-monitor-eye</v-icon>
-
-      </v-btn>
-      <v-btn
-          fab
-          small
-          @click="goto_page('player')"
-          color="gray"
-      >
-        <v-icon>mdi-account-eye</v-icon>
-
-      </v-btn>
-
-      <v-btn
-          fab
-          small
-          @click="goto_page('search')"
-          color="gray"
-      >
+        <v-btn
+            fab
+            small
+            @click="goto_page('search')"
+            color="gray"
+        >
 
           <v-icon>mdi-magnify</v-icon>
 
-      </v-btn>
-
-      <v-btn
-          fab
-
-          small
-          @click="goto_page('about')"
-          color="gray"
-      >
-        <v-icon>mdi-file-eye-outline</v-icon>
-
-      </v-btn>
-
-    </v-speed-dial>
-    <v-dialog
-        v-model="round_dialog"
-        width="500"
-    >
-
-      <v-card class="pa-5">
-        <v-card-title>
-          選擇輪數
-        </v-card-title>
-
-        <v-divider></v-divider>
-
-        <v-card-actions>
-          <v-select
-              shaped
-              v-model="round"
-              @change="change_round"
-              :items="round_options"
-          >
-          </v-select>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-<!--    <v-app-bar-->
-<!--        app-->
-<!--        flat-->
-<!--    >-->
-<!--      <v-container class="py-0 fill-height">-->
-
-<!--        <v-btn-->
-<!--            v-for="link in links"-->
-<!--            :key="link"-->
-<!--            @click="goto_page(link.path)"-->
-<!--            text-->
-<!--        >-->
-<!--          {{ link.label }}-->
-<!--        </v-btn>-->
-
-<!--        <v-spacer></v-spacer>-->
-
-<!--        <v-responsive max-width="260">-->
-
-<!--        </v-responsive>-->
-<!--      </v-container>-->
-<!--    </v-app-bar>-->
-
-    <v-main class="fill-height" app>
-      <v-container>
-
-
-        <router-view></router-view>
-
-      </v-container>
-
-
-
-    </v-main>
-
-<!--    <v-bottom-navigation-->
-<!--        app-->
-<!--    >-->
-<!--      <v-list>-->
-<!--        <v-list-item class="px-2">-->
-<!--          <v-list-item-avatar>-->
-<!--            <v-img src="https://randomuser.me/api/portraits/women/85.jpg"></v-img>-->
-<!--          </v-list-item-avatar>-->
-<!--        </v-list-item>-->
-
-<!--        <v-list-item link>-->
-<!--          <v-list-item-content>-->
-<!--            <v-list-item-title class="text-h6">-->
-<!--              Sandra Adams-->
-<!--            </v-list-item-title>-->
-<!--            <v-list-item-subtitle>sandra_a88@gmail.com</v-list-item-subtitle>-->
-<!--          </v-list-item-content>-->
-<!--        </v-list-item>-->
-<!--      </v-list>-->
-
-<!--      <v-divider></v-divider>-->
-<!--      <v-btn-->
-<!--          v-for="link in links"-->
-<!--          :key="link"-->
-<!--          @click="goto_page(link.path)"-->
-<!--          text-->
-<!--      >-->
-<!--        {{ link.label }}-->
-<!--      </v-btn>-->
-<!--      <v-list-->
-<!--          nav-->
-<!--          dense-->
-<!--      >-->
-<!--        <v-list-item link-->
-<!--                     v-for="link in links"-->
-<!--                     :key="link"-->
-<!--                     @click="goto_page(link.path)"-->
-<!--        >-->
-<!--          <v-list-item-title>{{ link.label }}</v-list-item-title>-->
-<!--        </v-list-item>-->
-
-<!--      </v-list>-->
-<!--    </v-bottom-navigation>-->
-
-    <v-footer
-        app
-        dense
-        padless
-    >
-
-      <v-card-text
-          class="text-center"
-
-      >Copyright © {{ new Date().getFullYear() }}  ofc-watch.kulimi.tw All rights reserved.</v-card-text>
-    </v-footer>
-    <v-snackbar
-        v-model="snackbar"
-        timeout="5000"
-    >
-      {{ text }}
-
-      <template v-slot:action="{ attrs }">
-        <v-btn
-            color="pink"
-            text
-            v-bind="attrs"
-            @click="snackbar = false"
-        >
-          關閉
         </v-btn>
-      </template>
-    </v-snackbar>
+
+        <v-btn
+            fab
+
+            small
+            @click="goto_page('about')"
+            color="gray"
+        >
+          <v-icon>mdi-file-eye-outline</v-icon>
+
+        </v-btn>
+
+      </v-speed-dial>
+      <v-dialog
+          v-model="round_dialog"
+          width="500"
+      >
+
+        <v-card class="pa-5">
+          <v-card-title>
+            選擇輪數
+          </v-card-title>
+
+          <v-divider></v-divider>
+
+          <v-card-actions>
+            <v-select
+                shaped
+                v-model="round"
+                @change="change_round"
+                :items="round_options"
+            >
+            </v-select>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+      <v-main class="fill-height" app>
+        <v-container>
+
+
+          <router-view></router-view>
+
+        </v-container>
+
+
+
+      </v-main>
+      <v-footer
+          app
+          dense
+          padless
+      >
+
+        <v-card-text
+            class="text-center"
+
+        >Copyright © {{ new Date().getFullYear() }}  ofc-watch.kulimi.tw All rights reserved.</v-card-text>
+      </v-footer>
+      <v-snackbar
+          v-model="snackbar"
+          timeout="5000"
+      >
+        {{ text }}
+
+        <template v-slot:action="{ attrs }">
+          <v-btn
+              color="pink"
+              text
+              v-bind="attrs"
+              @click="snackbar = false"
+          >
+            關閉
+          </v-btn>
+        </template>
+      </v-snackbar>
+    </v-container>
 
   </v-app>
 </template>
 
 <script>
-import router from "./router";
+import router from "./plugins/router";
 import api from "./api";
+import Login from "@/components/Login";
 
 export default {
   data() {
     return {
+      login: false,
       round_dialog: false,
       fab: false,
       search_text: "",
@@ -288,7 +234,11 @@ export default {
     }
 
     this.round_options = await api.getData("round_options")
+  },
+  components: {
+    Login
   }
+
 
 }
 </script>
