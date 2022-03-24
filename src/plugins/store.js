@@ -5,13 +5,14 @@ import createStore from 'vuex'
 const store = createStore({
     state () {
         return {
-            count: 0
+            token: '',
+            code: '',
         }
     },
     mutations: {
-        increment (state) {
-            state.count++
-        }
+        // increment (state) {
+        //     state.count++
+        // }
     }
 })
 
