@@ -7,7 +7,6 @@
         class="align-center justify-center text-center"
     >
       <Login v-if="!login"></Login>
-      <p></p>
     </v-container>
     <v-container v-if="login"
     >
@@ -207,8 +206,6 @@ export default {
         this.text = '請選擇輪數'
         this.snackbar = true
       }
-
-
     },
 
     change_round() {
