@@ -8,7 +8,7 @@
 
     >
       <v-card-title>Not Found</v-card-title>
-      
+
     </v-card>
   </v-container>
 </template>
