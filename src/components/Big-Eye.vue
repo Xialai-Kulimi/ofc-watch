@@ -32,8 +32,8 @@ name: "Big-Eye"
 }
 
 .eye {
-  width: 500px;
-  height: 500px;
+  max-width: 100%;
+
   animation-name: eye-open;
   animation-duration: 2.5s;
 
