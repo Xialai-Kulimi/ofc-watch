@@ -83,8 +83,11 @@
 
 <script>
 import Big_Eye from "@/components/Big-Eye";
+import api from "@/api";
+
+
   export default {
-    name: 'HelloWorld',
+    name: 'Login',
 
     data: () => ({
 
@@ -92,8 +95,18 @@ import Big_Eye from "@/components/Big-Eye";
     components: {
       Big_Eye
     },
-    mounted() {
-      
+    mounted: async function() {
+      let params = new URLSearchParams(location.search)
+      let code = (params.get("code"))
+      let token = localStorage.token
+      if (code){
+        token = await api.login()
+
+      }
+      if (token){
+        this.$store.commit( 'update_token', token)
+      }
+
     }
   }
 </script>
