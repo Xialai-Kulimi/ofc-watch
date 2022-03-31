@@ -35,6 +35,13 @@ def make_session_permanent():
     session.permanent = True
 
 
+def str_is_safe(strs):
+    for _char in strs:
+        if not ('\u4e00' <= _char <= '\u9fa5' or 33 <= ord(_char) <= 126):
+            return False
+    return True
+
+
 def token_updater(token):
     session['oauth2_token'] = token
 
