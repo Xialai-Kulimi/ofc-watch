@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 import json
 import pymongo
 import pickle
+from config import new_user
 load_dotenv()
 
 OAUTH2_CLIENT_ID = os.environ['OAUTH2_CLIENT_ID']
@@ -53,15 +54,7 @@ def make_session(token=None, state=None, scope=None):
         token_updater=token_updater)
 
 
-def new_user(user, token)
-    return {
-        '_id': user['id'],
-        'token': token,
-        'name': user['username'],
-        'avatar': user['avatar'],
-        'discriminator': user['discriminator'],
-        'op': 1
-     }
+
 
 
 @app.route('/api/login')
