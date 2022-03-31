@@ -108,7 +108,7 @@ def api(_round, param = 'none', _id = '-1'):
     if not (str_is_safe(_round) and str_is_safe(param) and str_is_safe(_id)):
         return Response(json.dumps({'text': 'Unsafe string detected.'}), mimetype='application/json')
 
-    user_data = user_collection.find_one({'_id': discord_id})
+    user_data = user_collection.find_one({'_id': session.get('discord_id')})
     op_level = user_data['op']
     
 
