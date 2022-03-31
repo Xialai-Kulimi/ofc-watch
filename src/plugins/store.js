@@ -6,13 +6,13 @@ Vue.use(Vuex)
 export default new Vuex.Store({
     strict: true,
     state: {
-        token: ''
+        // token: ''
     },
     mutations: {
-        update_token(state, new_token) {
-            state.token = new_token
-            localStorage.token = new_token
-        },
+        // update_token(state, new_token) {
+        //     state.token = new_token
+        //     localStorage.token = new_token
+        // },
 
     },
 
