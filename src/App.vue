@@ -4,11 +4,11 @@
         style="display: flex;flex-flow: column"
         row
         fluid
-        class="align-center justify-center text-center"
+        class="align-center justify-center text-center ma-0"
     >
-      <Login v-if="!login"></Login>
+      <Login v-if="!this.$store.state.token"></Login>
     </v-container>
-    <v-container v-if="login"
+    <v-container v-if="this.$store.state.token"
     >
       <v-speed-dial
           v-model="fab"
@@ -190,6 +190,14 @@ export default {
         // {label: '武具大賞', path: "weapon"},
         {label: 'mdi', icon: 'mdi-file-eye-outline', path: "about"},
       ],
+      // links: [
+      //   // {label: 'OFC WATCH', path: ""},
+      //   {label: '玩家', icon: 'mdi-account-eye', path: "player"},
+      //   // {label: '會戰', path: "match"},
+      //   // {label: '搜尋', path: "search"},
+      //   // {label: '武具大賞', path: "weapon"},
+      //   {label: 'mdi', icon: 'mdi-file-eye-outline', path: "about"},
+      // ],
     }
   },
   methods: {
@@ -231,6 +239,9 @@ export default {
     }
 
     this.round_options = await api.getData("round_options")
+    if (localStorage.token){
+      this.$store.commit('update_token', localStorage.token)
+    }
   },
   components: {
     Login
