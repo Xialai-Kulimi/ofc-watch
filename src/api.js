@@ -2,19 +2,16 @@
 var jsonify = res => res.json();
 function ajax(url){
     return new Promise((resolve, reject) => {
-        fetch(`/api/${url}`).then(jsonify).then(resolve).catch(reject)
+        fetch(`/api/${url}`, {
+            credentials: 'include'
+        }).then(jsonify).then(resolve).catch(reject)
     })
 }
-function report(url){
-    return new Promise((resolve, reject) => {
-        fetch(`/ofc/${url}`).then(jsonify).then(resolve).catch(reject)
-    })
-}
+
+
 export default {
     getData(url){
         return ajax(url)
     },
-    getReport(url){
-        return report(url)
-    },
+
 }
