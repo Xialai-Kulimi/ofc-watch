@@ -1,5 +1,5 @@
 import os
-from flask import Flask, g, session, redirect, request, url_for, jsonify
+from flask import Flask, g, session, redirect, request, url_for, jsonify, Response
 from requests_oauthlib import OAuth2Session
 from dotenv import load_dotenv
 import json
@@ -91,7 +91,7 @@ def callback():
 @app.route('/api/links')
 def links():
     user_data = user_collection.find_one({'_id': session.get('discord_id')})
-    return flask.Response(json.dumps(user_data['links']), mimetype='application/json')
+    return Response(json.dumps(user_data['links']), mimetype='application/json')
 
 
 @app.route('/api/<_round>')
@@ -99,7 +99,7 @@ def links():
 @app.route('/api/<_round>/<param>/<_id>')
 def api(_round, param = 'none', _id = '-1'):
     if not (str_is_safe(_round) and str_is_safe(param) and str_is_safe(_id)):
-        return flask.Response(json.dumps({'text': 'Unsafe string detected.'}), mimetype='application/json')
+        return Response(json.dumps({'text': 'Unsafe string detected.'}), mimetype='application/json')
 
     user_data = user_collection.find_one({'_id': discord_id})
     op_level = user_data['op']
@@ -113,9 +113,9 @@ def api(_round, param = 'none', _id = '-1'):
             result = data_collection.find_one({"_id": int(_id)})
 
         if result.get('op', 1000) > op_level:
-            return flask.Response(json.dumps({'text': '存取被拒'}), mimetype='application/json')
+            return Response(json.dumps({'text': '存取被拒'}), mimetype='application/json')
         else:
-            return flask.Response(json.dumps(result), mimetype='application/json')
+            return Response(json.dumps(result), mimetype='application/json')
 
     elif (param != 'none'):
         round_db = mgclient[f'ofc{_round}'.replace('.', '-')]
@@ -125,18 +125,18 @@ def api(_round, param = 'none', _id = '-1'):
             result = data_collection.find_one({"_id": int(param)})
 
         if result.get('op', 1000) > op_level:
-            return flask.Response(json.dumps({'text': '存取被拒'}), mimetype='application/json')
+            return Response(json.dumps({'text': '存取被拒'}), mimetype='application/json')
         else:
-            return flask.Response(json.dumps(result), mimetype='application/json')
+            return Response(json.dumps(result), mimetype='application/json')
 
     else:
         round_db = mgclient[f'ofc'.replace('.', '-')]
         data_collection = round_db['data']
         result = data_collection.find_one({"_id": _round})
         if result.get('op', 1000) > op_level:
-            return flask.Response(json.dumps({'text': '存取被拒'}), mimetype='application/json')
+            return Response(json.dumps({'text': '存取被拒'}), mimetype='application/json')
         else:
-            return flask.Response(json.dumps(result), mimetype='application/json')
+            return Response(json.dumps(result), mimetype='application/json')
 
 
 if __name__ == '__main__':
