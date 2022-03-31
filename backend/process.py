@@ -5,6 +5,7 @@ import json
 import pymongo
 import time
 import anautils
+import config
 load_dotenv()
 
 _round = sys.argv[1]
@@ -16,28 +17,18 @@ report_collection = ofc_db['report']
 
 anautils.anautils(ofc_db, mgclient.ofc)
 
-if not ofc_db['data'].find_one({'_id': 'data'}):
-	print(f'Detect new round: {_round}')
-	ofc_db['data'].insert_one(
-		{
-			'_id': 'data',
-			'last_work_report': 0,
-		}
-	)
+for i in config.data_list:
+	if not ofc_db['data'].find_one({'_id': i}):
+		print(f'data collection missing: {i}')
+		ofc_db['data'].insert_one(
+			getattr(config, i)
+		)
 
-if not ofc_db['data'].find_one({'_id': 'op_dict'}):
-	ofc_db['data'].insert_one(
-		{
-			'_id': 'op_dict',
-			'last_work_report': 0,
-		}
-	)
-		
 
 while True:
 	ofc_data = ofc_db['data'].find_one({'_id': 'data'})
 	last_work_report = ofc_data['last_work_report']
-	report_list = report_collection.find({'_id': {'$gt': last_work_report}}, limit=1000).sort('_id')
+	report_list = report_collection.find({'_id': {'$gt': last_work_report}}, limit=500).sort('_id')
 	for i in report_list:
 		if i['_id'] % 100 == 0:
 			print(i['_id'])
@@ -50,11 +41,6 @@ while True:
 		
 	try:
 		pass
-		# for i in report_list:
-		# 	anautils.player(i)
-		# 	anautils.match(i)
-		# 	anautils.weapon(i)
-		# 	anautils.hunt(i)
 
 	except Exception as e:
 		print(i)
