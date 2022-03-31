@@ -208,9 +208,7 @@ export default {
     }
     this.links = await api.getData("links")
     this.round_options = await api.getData("round_options")
-    if (sessionStorage.getItem('oauth2_state')){
-      this.login = true
-    }
+    this.login = await api.getData("check_login")
 
   },
   components: {

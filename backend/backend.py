@@ -137,7 +137,7 @@ def api(_round, param = 'none', _id = '-1'):
             return Response(json.dumps(result), mimetype='application/json')
 
     else:
-        round_db = mgclient[f'ofc'.replace('.', '-')]
+        round_db = mgclient[f'ofc']
         data_collection = round_db['data']
         result = data_collection.find_one({"_id": _round})
         if result.get('op', 1000) > op_level:
