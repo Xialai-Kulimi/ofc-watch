@@ -5,7 +5,7 @@ data = {
 	"last_work_report": 0,
 }
 
-def new_user(user, token)
+def new_user(user, token):
     return {
         '_id': user['id'],
         'token': token,
