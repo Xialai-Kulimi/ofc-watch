@@ -24,6 +24,14 @@ if not ofc_db['data'].find_one({'_id': 'data'}):
 			'last_work_report': 0,
 		}
 	)
+
+if not ofc_db['data'].find_one({'_id': 'op_dict'}):
+	ofc_db['data'].insert_one(
+		{
+			'_id': 'op_dict',
+			'last_work_report': 0,
+		}
+	)
 		
 
 while True:
