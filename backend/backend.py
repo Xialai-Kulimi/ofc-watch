@@ -81,7 +81,10 @@ def callback():
     user = discord.get(API_BASE_URL + '/users/@me').json()
     session['discord_id'] = user['id']
 
-    user_collection.insert_one(new_user(user, pickle.dumps(token)))
+    try:
+        user_collection.insert_one(new_user(user, pickle.dumps(token)))
+    except pymongo.errors.DuplicateKeyError:
+        user_collection.replace_one({'_id': user['id']}, new_user(user, pickle.dumps(token)))
     return redirect('/welcome')
 
 
