@@ -11,7 +11,11 @@ def new_user(user, token)
         'token': token,
         'name': user['username'],
         'avatar': user['avatar'],
-        'links': []
+        'links': [
+        	{'path': '', 'icon': 'mdi-monitor-eye'},
+        	{'path': 'player', 'icon': 'mdi-account-eye'},
+        	{'path': 'about', 'icon': 'mdi-file-eye-outline'},
+        ]
         'discriminator': user['discriminator'],
         'op': 1
      }
