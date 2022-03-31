@@ -6,9 +6,9 @@
         fluid
         class="align-center justify-center text-center ma-0"
     >
-      <Login v-if="!this.$store.state.token"></Login>
+      <Login v-if="!login"></Login>
     </v-container>
-    <v-container v-if="this.$store.state.token"
+    <v-container v-if="login"
     >
       <v-speed-dial
           v-model="fab"
@@ -49,41 +49,12 @@
         <v-btn
             fab
             small
-            @click="goto_page('')"
+            v-for="b in links"
+            :key="b"
+            @click="goto_page(b.path)"
             color="gray"
         >
-          <v-icon>mdi-monitor-eye</v-icon>
-
-        </v-btn>
-        <v-btn
-            fab
-            small
-            @click="goto_page('player')"
-            color="gray"
-        >
-          <v-icon>mdi-account-eye</v-icon>
-
-        </v-btn>
-
-        <v-btn
-            fab
-            small
-            @click="goto_page('search')"
-            color="gray"
-        >
-
-          <v-icon>mdi-magnify</v-icon>
-
-        </v-btn>
-
-        <v-btn
-            fab
-
-            small
-            @click="goto_page('about')"
-            color="gray"
-        >
-          <v-icon>mdi-file-eye-outline</v-icon>
+          <v-icon>{{b.icon}}</v-icon>
 
         </v-btn>
 
@@ -183,12 +154,10 @@ export default {
         {text: '第十三輪 真正的艾恩葛朗特', value: '12'}
       ],
       links: [
-        // {label: 'OFC WATCH', path: ""},
-        {label: '玩家', icon: 'mdi-account-eye', path: "player"},
-        // {label: '會戰', path: "match"},
-        // {label: '搜尋', path: "search"},
-        // {label: '武具大賞', path: "weapon"},
-        {label: 'mdi', icon: 'mdi-file-eye-outline', path: "about"},
+        // {'path': '', 'icon': 'mdi-monitor-eye'},
+        // {'path': 'player', 'icon': 'mdi-account-eye'},
+        // {'path': 'search', 'icon': 'mdi-magnify'},
+        // {'path': 'about', 'icon': 'mdi-file-eye-outline'},
       ],
       // links: [
       //   // {label: 'OFC WATCH', path: ""},
@@ -237,11 +206,12 @@ export default {
         await router.replace("/" + this.round)
       }
     }
-
+    this.links = await api.getData("links")
     this.round_options = await api.getData("round_options")
-    if (localStorage.token){
-      this.$store.commit('update_token', localStorage.token)
+    if (sessionStorage.getItem('oauth2_state')){
+      this.login = true
     }
+
   },
   components: {
     Login
