@@ -91,7 +91,8 @@ def callback():
     try:
         user_collection.insert_one(new_user(user, pickle.dumps(token)))
     except pymongo.errors.DuplicateKeyError:
-        user_collection.replace_one({'_id': user['id']}, new_user(user, pickle.dumps(token)))
+        pass
+        # user_collection.replace_one({'_id': user['id']}, new_user(user, pickle.dumps(token)))
     return redirect('/welcome')
 
 
@@ -109,7 +110,7 @@ def api(_round, param = 'none', _id = '-1'):
         return Response(json.dumps({'text': 'Unsafe string detected.'}), mimetype='application/json')
 
     user_data = user_collection.find_one({'_id': session.get('discord_id')})
-    op_level = user_data['op']
+    op_level = user_data.get('op', 0)
     
 
     if (_id != '-1'):
