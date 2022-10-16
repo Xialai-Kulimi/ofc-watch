@@ -14,12 +14,11 @@ def get_report(report_id):
         'User-Agent': 'I just wanna know all the secret data',
         'Accept': '*/*',
         'Accept-Language': 'zh-TW,zh;q=0.8,en-US;q=0.5,en;q=0.3',
-        'token': os.getenv('watch-token'),
-        'Origin': 'https://ourfloatingcastle.com',
+        'Origin': 'https://swordgale.online/',
         'Connection': 'keep-alive',
         'TE': 'Trailers',
     }
-    get_response = requests.get(f'https://api.ourfloatingcastle.com/api/report/{report_id}', headers=headers)
+    get_response = requests.get(f'https://api.swordgale.online/api/report/{report_id}', headers=headers)
 
     return get_response
 
@@ -41,14 +40,14 @@ try:
         for i in range(1, last_id):
             if report_collection.find_one({"_id": i}) == None:
                 response = get_report(i)
-                report = json.loads(get_report(i).text)
-                if status_code.status_code != 200 or report.get("report") == None:
+                report = json.loads(response.text)
+                if status_code.status_code != 200:
                     print(response.text)
                     stop()
-                
-                report['_id'] = report['report']['id']
+
+                report['_id'] = i
                 report_collection.insert_one(report)
-    
+
         i += 1
     else:
         i = report_collection.count_documents({}) + 1
@@ -66,7 +65,7 @@ while True:
     if _response.status_code == 200:
         try:
             line_dict = json.loads(_response.text)
-            line_dict['_id'] = line_dict['report']['id']
+            line_dict['_id'] = i
             report_collection.insert_one(line_dict)
 
             i += 1
