@@ -1,3 +1,5 @@
+# 遊戲沒了，不再更新
+
 # OurFloatingCastle Report Watcher
 
 https://ofc-watch.kulimi.tw
